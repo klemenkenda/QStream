@@ -49,19 +49,19 @@ class PageHinkley extends BaseDriftDetector {
         if (this.in_concept_change) this.reset();
 
         this.x_mean = this.x_mean + (x - this.x_mean) / (1.0 * this.sample_count);
-        this.sum = this.alpha * this.sum + (x - this.x_mean - this.delta)
+        this.sum = this.alpha * this.sum + (x - this.x_mean - this.delta);
 
-        this.sample_count += 1
+        this.sample_count++;
 
-        this.estimation = this.x_mean
-        this.in_concept_change = false
-        this.in_warning_zone = false
+        this.estimation = this.x_mean;
+        this.in_concept_change = false;
+        this.in_warning_zone = false;
 
-        this.delay = 0
+        this.delay = 0;
 
         if (this.sample_count < this.min_instances) return;
 
-        if (this.sum > this.lambda) this.in_concept_change = true
+        if (this.sum > this.lambda) this.in_concept_change = true;
     }
 
 }
