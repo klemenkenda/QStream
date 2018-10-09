@@ -1,0 +1,19 @@
+{
+  "name": "qstream",
+  "version": "0.0.1",
+  "description": "JavaScript streaming library.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/klemenkenda/qstream.git"
+  },
+  "author": "Klemen Kenda",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/klemenkenda/qstream/issues"
+  },
+  "homepage": "https://github.com/klemenkenda/qstream#readme"
+}
