@@ -1,3 +1,5 @@
+let drift_detection = require('./drift_detection/index.js');
+
 module.exports = {
-    drift_detection: require('drift_detection/index.js')
+    DriftDetection: drift_detection
 }

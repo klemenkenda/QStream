@@ -1,6 +1,5 @@
 let assert = require('assert');
-let { BaseDriftDetector, PageHinkley } = require('../drift_detection/index.js');
-
+let QStream = require('../index.js');
 
 function rand_normal(mu, sigma, nsamples){
     if(!nsamples) nsamples = 6
@@ -19,17 +18,17 @@ function rand_normal(mu, sigma, nsamples){
 describe('drift detection', function() {
     describe('base drift detector', function() {
         it('instantiating base detector throws error', function() {
-            assert.throws(function() { new BaseDriftDetector() }, Error, "Error thrown.");
+            assert.throws(function() { new QStream.DriftDetection.BaseDriftDetector() }, Error, "Error thrown.");
         });
     });
 
     describe('Page-Hinkley drift detection', function() {
         it('instantiating Page-Hinkley detector', function() {
-            let ph = new PageHinkley();
+            let ph = new QStream.DriftDetection.PageHinkley();
         });
 
         it('detector test - one drift change in proximity of simulated change', function() {
-            let ph = new PageHinkley();
+            let ph = new QStream.DriftDetection.PageHinkley();
             let changeI = -1;
             let changes = 0;
 
