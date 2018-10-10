@@ -1,8 +1,21 @@
+/**
+ * Copyright (c) Jožef Stefan Institute & contributors to the QStream project, 2018.
+ * All rights reserved.
+ *
+ * This source code is licensed under the FreeBSD license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * Drift detector - Page-Hinkley test.
+ * Author: Klemen Kenda, klemen.kenda@ijs.si
+ */
+
+// includes
 let BaseDriftDetector = require('./base_drift_detector.js');
 
 class PageHinkley extends BaseDriftDetector {
     /**
-     * Page Hinkley change detector (based on scikit-multiflow)
+     * Page Hinkley change detector (based on scikit-multiflow implementation, which is further based on
+     * the book - Gamma, Knowledge Discovery from Data Streams, 2013, pp. 76)
      *
      * This change detection method works by computing the observed values and their mean up to the current
      * moment. Page Hinkley won't output warning zone warnings, only change detections. The method works by
@@ -29,7 +42,7 @@ class PageHinkley extends BaseDriftDetector {
     }
 
     /**
-     * Resets the change detector parameters.
+     * Resets the change detector parameters (in the beginning or after drift detection).
      */
     reset() {
         super.reset();
