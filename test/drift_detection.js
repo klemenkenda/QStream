@@ -68,6 +68,7 @@ describe('drift detection', function() {
             let changeI = -1;
             let warningI = -1;
             let changes = 0;
+            let warnings = 0;
 
             // create the data
             let data = [];
@@ -76,13 +77,19 @@ describe('drift detection', function() {
             }
 
             for (let i = 1000; i < 1500; i++) {
-                data[i] = 0;
+                data[i] = 1;
             }
 
             for (let i = 0; i < 2000; i++) {
                 ddm.add_element(data[i]);
-                if (ddm.detected_warning_zone()) warningI++;
-                if (ddm.detected_change()) changeI++;
+                if (ddm.detected_warning_zone()) {
+                    warnings++;
+                    warningI = i;
+                }
+                if (ddm.detected_change()) {
+                    changes++;
+                    changeI = i;
+                }
             }
 
             assert.equal(changes, 1);

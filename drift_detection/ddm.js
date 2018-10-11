@@ -28,11 +28,15 @@ class DDM extends BaseDriftDetector {
      *   if pi + si >= pmin + 3 * smin -> Change detected
      *
      * @param {int}     min_num_instances   The minimum number of instances before detecting change.
+     * @param {float}   alpha               The parameter to define the warning zone boundary.
+     * @param {float}   beta                The parameter do define the detection drift boundary.
      */
-    constructor(min_num_instances = 30) {
+    constructor(min_num_instances = 30, alpha = 2, beta = 3) {
         super();
 
-        this.min_num_instances = min_num_instances;
+        this.min_instances = min_num_instances;
+        this.alpha = alpha;
+        this.beta = beta;
 
         this.sample_count = null;
         this.miss_prob = null;
@@ -80,10 +84,10 @@ class DDM extends BaseDriftDetector {
 
         // concept change rule
         if ((this.sample_count > this.min_instances) &&
-            (this.miss_prob + this.miss_std > this.miss_prob_min + 3*this.miss_sd_min))
+            (this.miss_prob + this.miss_std > this.miss_prob_min + this.beta * this.miss_sd_min))
             this.in_concept_change = true;
         // warning zone rule
-        else if (this.miss_prob + this.miss_std > this.miss_prob_min + 2 * this.miss_sd_min)
+        else if (this.miss_prob + this.miss_std > this.miss_prob_min + this.alpha * this.miss_sd_min)
             this.in_warning_zone = true;
         else this.in_warning_zone = false
     }
