@@ -1,3 +1,15 @@
+/**
+ * Copyright (c) Jožef Stefan Institute & contributors to the QStream project, 2018.
+ * All rights reserved.
+ *
+ * This source code is licensed under the FreeBSD license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * Drift detector - Page-Hinkley test.
+ * Author: Klemen Kenda, klemen.kenda@ijs.si
+ */
+
+
 // includes
 let BaseDriftDetector = require('./base_drift_detector.js');
 
@@ -47,6 +59,9 @@ class DDM extends BaseDriftDetector {
         this.reset();
     }
 
+    /**
+     * Resets the change detector parameters (in the beginning or after drift detection).
+     */
     reset() {
         super.reset();
         this.sample_count = 1;
@@ -58,6 +73,7 @@ class DDM extends BaseDriftDetector {
     }
 
     /**
+     * Add new element to the statistics.
      * @param {*} prediction Either 0 or 1.This parameter indicates whether the last sample analyzed
      *                       was correctly classified or not. 1 indicates a good classification
      *                       and 0 a wrong classification.
