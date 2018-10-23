@@ -38,6 +38,7 @@ class PageHinkley extends BaseDriftDetector {
         this.x_mean = null;
         this.sample_count = null;
         this.sum = null;
+        this.in_concept_change = null;
         this.reset();
     }
 
@@ -49,6 +50,7 @@ class PageHinkley extends BaseDriftDetector {
         this.sample_count = 1;
         this.x_mean = 0.0;
         this.sum = 0.0;
+        this.in_concept_change = false;
     }
 
     /**

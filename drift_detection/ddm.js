@@ -9,6 +9,7 @@
  * Author: Klemen Kenda, klemen.kenda@ijs.si
  */
 
+// TODO: What about regression problems? Using the acctual std?
 
 // includes
 let BaseDriftDetector = require('./base_drift_detector.js');
