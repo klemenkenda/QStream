@@ -8,6 +8,13 @@ It is then exposed to Node.js via registration of a stream aggregate in the ```q
 
 ## Implementation
 
+Some useful hints (coding style):
+
+* do not use tabs in C++ code; use spaces (4 spaces / tab)
+* save/load state should only save state variables and not parameters
+* use {} after ifs, use () in ifs consistently
+* use TFlt only for members of classes, otherwise use double
+
 ### Headers
 
 Create headers for aggregate in ```qminer_aggr.h```. Some of the functions like ```IsNmInt``` or ```IsNmFlt``` or ```GetType``` or ```Type``` can already be implemented in the header.
