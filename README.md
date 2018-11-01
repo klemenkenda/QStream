@@ -1,4 +1,5 @@
 [![codecov](https://codecov.io/gh/klemenkenda/QStream/branch/master/graph/badge.svg)](https://codecov.io/gh/klemenkenda/QStream)
+[![Build Status](https://travis-ci.org/klemenkenda/QStream.svg?branch=master)](https://travis-ci.org/klemenkenda/QStream)
 
 # QStream
 
