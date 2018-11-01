@@ -100,3 +100,5 @@ class StreamModel {
         throw new TypeError("StreamModel - get_info() not implemented.");
     }
 }
+
+module.exports = StreamModel;
