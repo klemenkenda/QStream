@@ -3,6 +3,7 @@ language:
 install:
   - npm install -g codecov
   - npm install -g mocha
+  - npm install
 script:
   - npm test
   - codecov
