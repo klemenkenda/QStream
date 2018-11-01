@@ -5,7 +5,7 @@ node_js:
 install:
   - npm install -g codecov
   - npm install -g mocha
-  - npm install -g istanbul
+  - npm install --save-dev istanbul
   - npm install
 script:
   - npm test
