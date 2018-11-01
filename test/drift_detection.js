@@ -76,7 +76,7 @@ describe('drift detection', function() {
                 data.push(random_int(0, 2));
             }
 
-            for (let i = 1000; i < 1500; i++) {
+            for (let i = 1000; i < 2000; i++) {
                 data[i] = 1;
             }
 
@@ -85,6 +85,7 @@ describe('drift detection', function() {
                 if (ddm.detected_warning_zone()) {
                     warnings++;
                     warningI = i;
+                    // console.log(warnings)
                 }
                 if (ddm.detected_change()) {
                     changes++;
@@ -93,7 +94,8 @@ describe('drift detection', function() {
             }
 
             assert.equal(changes, 1);
-            assert.equal((changeI >= 1001) && (changeI < 1100), true);
+            assert.equal((changeI >= 1001) && (changeI < 1200), true);
         });
+
     });
 })

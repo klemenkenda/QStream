@@ -44,7 +44,7 @@ class DDM extends BaseDriftDetector {
      * @param {float}   alpha               The parameter to define the warning zone boundary.
      * @param {float}   beta                The parameter do define the detection drift boundary.
      */
-    constructor(min_num_instances = 30, alpha = 2, beta = 3) {
+    constructor(min_num_instances = 30, alpha = 2.0, beta = 3.0) {
         super();
 
         this.min_instances = min_num_instances;
@@ -75,7 +75,7 @@ class DDM extends BaseDriftDetector {
 
     /**
      * Add new element to the statistics.
-     * @param {*} prediction Either 0 or 1.This parameter indicates whether the last sample analyzed
+     * @param {*} prediction Either 0 or 1. This parameter indicates whether the last sample analyzed
      *                       was correctly classified or not. 1 indicates a good classification
      *                       and 0 a wrong classification.
      */
