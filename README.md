@@ -3,7 +3,7 @@
 
 # QStream
 
-Playground for stream mining in JavaScript. Partially based on [Scikit Multiflow][https://github.com/scikit-multiflow/scikit-multiflow]. Methods will be partially moved to [QMiner][http://qminer.github.io].
+Playground for stream mining in JavaScript. Partially based on [Scikit Multiflow](https://github.com/scikit-multiflow/scikit-multiflow). Methods will be partially moved to [QMiner](http://qminer.github.io).
 
 ## Moved to QMiner
 
