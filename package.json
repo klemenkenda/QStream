@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/klemenkenda/qstream/issues"
   },
-  "homepage": "https://github.com/klemenkenda/qstream#readme"
+  "homepage": "https://github.com/klemenkenda/qstream#readme",
+  "dependencies": {
+    "mocha": "^5.2.0"
+  }
 }
