@@ -51,6 +51,120 @@ class HoeffdingTree extends StreamModel {
 
 }
 
+class FoundNode {
+    /**
+     * Base class for tree nodes.
+     *
+     * @param {Node} node               The node object (split or learning node).
+     * @param {SplitNode} parent        The node's parent (SplitNode or null).
+     * @param {integer} parent_branch   The parent node's branch.
+     */
+    constructor(node = null, parent = null, parent_branch = null) {
+        this.node = node;
+        this.parent = parent;
+        this.parent_branch = parent_branch;
+    }
+}
+
+class Node {
+    /**
+     * Base class for nodes in a Hoeffding Tree.
+     *
+     * @param {dict} class_observations     Class observations (dict (class_value, weight) or null).
+     */
+    constructor(class_observations) {
+        if (class_observations == null) {
+            class_observations = {};
+        }
+        this._observed_class_distribution = class_observations;
+    }
+
+    /**
+     * Determine if the node is a leaf.
+     *
+     * Returns true if leaf, false otherwise.
+     */
+    is_leaf() {
+        return true;
+    }
+
+    /**
+     * Traverse down the tree to locate the corresponding leaf for an instance.
+     *
+     * @param {instance} X          Data instances - array of shape (n_samples, n_features). TODO: is this true?
+     * @param {*} parent            Parent node.
+     * @param {*} parent_branch     Parent branch index.
+     *
+     * Returns The corresponding leaf (FoundNode).
+     */
+    filter_instance_to_leaf(X, parent, parent_branch) {
+        // TODO: ?
+        return null;
+    }
+
+    /**
+     * Get the current observed class distribution at the node.
+     *
+     * Returns class distribution at the node (dict(class_value, weight)).
+     */
+    get_observed_class_distribution() {
+        return this._observed_class_distribution;
+    }
+
+    /**
+     * Get the votes per class for a given instance.
+     *
+     * @param {array} X     Array of length equal to the number of features.
+     * @param {*} ht        The Hoeffding tree.
+     *
+     * Returns class votes for the given instance (dict(class_value, weight)).
+     */
+    get_class_votes(X, ht) {
+        // TODO: not really implemented here
+        return null;
+    }
+
+    /**
+     * Check if observed class distribution is pure, i.e. if all samples belong to the same class.
+     *
+     * Returns true if observed number of classes is less than 2, false otherwise.
+     */
+    observed_class_distribution_is_pure() {
+        let count = 0;
+        for (i in this._observed_class_distribution) {
+            if (i.weight != 0) {
+                count++;
+                if (count == 2) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Calculate the depth of the subtree from this node.
+     *
+     * Returns subtree depth, 0 if the node is a leaf.
+     */
+    subtree_depth() {
+        return 0;
+    }
+
+    // TODO
+    describe_subtree(ht, buffer, indent = 0) {
+        return null;
+    }
+}
+
+class SplitNode extends Node {
+
+}
+
+class LearningNode extends Node {
+
+}
+
 
 
 module.exports = HoeffdingTree;
