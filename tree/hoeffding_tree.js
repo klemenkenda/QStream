@@ -130,15 +130,14 @@ class Node {
      * Returns true if observed number of classes is less than 2, false otherwise.
      */
     observed_class_distribution_is_pure() {
-        let count = 0;
-        for (i in this._observed_class_distribution) {
-            if (i.weight != 0) {
-                count++;
-                if (count == 2) {
-                    return false;
-                }
-            }
-        }
+        // map/reduce makes the code pretty unreadable :(
+        let dict_values = Object.keys(this._observed_class_distribution).map(key => this._observed_class_distribution[key]);
+        let count = dict_values.reduce((a, b) => {
+            if (b != 0) return a + 1;
+            else return a;
+        }, 0);
+
+        if (count >= 2) return false;
         return true;
     }
 
@@ -149,6 +148,22 @@ class Node {
      */
     subtree_depth() {
         return 0;
+    }
+
+    /**
+     * Calculate node's promise.
+     *
+     * Returns an integer. A small value indicates that the node has seen more samples of a given class than the other classes.
+     */
+    calculate_promise() {
+        let dict_values = Object.keys(this._observed_class_distribution).map(key => dictionary[key]);
+        let total_seen = dict_values.reduce((a, b) => a + b, 0);
+
+        if (total_seen > 0) {
+            return total_seen - Math.max(...dict_values);
+        } else {
+            return 0;
+        }
     }
 
     // TODO

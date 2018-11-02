@@ -18,5 +18,8 @@
   "homepage": "https://github.com/klemenkenda/qstream#readme",
   "dependencies": {
     "mocha": "^5.2.0"
+  },
+  "devDependencies": {
+    "rewire": "^4.0.1"
   }
 }
