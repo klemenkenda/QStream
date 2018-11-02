@@ -41,6 +41,16 @@ describe('tree', function() {
                 assert.equal(nodePure.observed_class_distribution_is_pure(), true);
                 assert.equal(node.observed_class_distribution_is_pure(), false);
             });
+
+            it('subtree depth returns 0', function() {
+                assert.equal(node.subtree_depth(), 0);
+            });
+
+            it('calculate promise test', function() {
+                assert.equal(node.calculate_promise(), 0.5);
+                let nodePure = new HTNode({"x": 1, "y": 0, "z": 0});
+                assert.equal(nodePure.calculate_promise(), 0);
+            });
         });
     });
 

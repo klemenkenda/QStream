@@ -156,7 +156,7 @@ class Node {
      * Returns an integer. A small value indicates that the node has seen more samples of a given class than the other classes.
      */
     calculate_promise() {
-        let dict_values = Object.keys(this._observed_class_distribution).map(key => dictionary[key]);
+        let dict_values = Object.keys(this._observed_class_distribution).map(key => this._observed_class_distribution[key]);
         let total_seen = dict_values.reduce((a, b) => a + b, 0);
 
         if (total_seen > 0) {
