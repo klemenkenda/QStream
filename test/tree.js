@@ -50,6 +50,12 @@ describe('tree', function() {
                 assert.equal(node.calculate_promise(), 0.5);
                 let nodePure = new HTNode({"x": 1, "y": 0, "z": 0});
                 assert.equal(nodePure.calculate_promise(), 0);
+                let nodeNone = new HTNode({"x": 0, "y": 0, "z": 0});
+                assert.equal(nodePure.calculate_promise(), 0);
+            });
+
+            it('describe subtree returns null', function() {
+                assert.equal(node.describe_subtree(), null);
             });
         });
     });
