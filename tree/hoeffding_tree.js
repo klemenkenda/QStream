@@ -1,8 +1,8 @@
 let core = require('../core/index.js');
 let StreamModel = core.StreamModel;
-let NominalAttributeClassObserver = require('nominal_attribute_class_observer.js');
-let NumericAttributeClassObserverGaussian = require('numeric_attribute_class_observer_gaussian.js');
-let AttributeClassObseverNull = require('attribute_class_observer_null.js');
+let NominalAttributeClassObserver = require('./nominal_attribute_class_observer.js');
+let NumericAttributeClassObserverGaussian = require('./numeric_attribute_class_observer_gaussian.js');
+let AttributeClassObseverNull = require('./attribute_class_observer_null.js');
 
 class HoeffdingTree extends StreamModel {
     /**
