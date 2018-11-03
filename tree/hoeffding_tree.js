@@ -1,5 +1,8 @@
 let core = require('../core/index.js');
 let StreamModel = core.StreamModel;
+let NominalAttributeClassObserver = require('nominal_attribute_class_observer.js');
+let NumericAttributeClassObserverGaussian = require('numeric_attribute_class_observer_gaussian.js');
+let AttributeClassObseverNull = require('attribute_class_observer_null.js');
 
 class HoeffdingTree extends StreamModel {
     /**
@@ -299,6 +302,169 @@ class SplitNode extends Node {
 
 class LearningNode extends Node {
 
+    /**
+     * Base class for Learning Nodes in a Hoeffding Tree.
+     *
+     * @param {array} initial_class_observations    Initial class observations dict (class_value, weight) or null.
+     */
+    constructor(initial_class_observations = null) {
+        super(initial_class_observations);
+    }
+
+    /**
+     * Update the node with the provided instance.
+     *
+     * @param {instance} X                  Instance attributes for updating the node (array of length equal to number of features).
+     * @param {int} y                       Instance class.
+     * @param {float} weight                Instance weight.
+     * @param {HoeffdingTree} htinstance    Hoeffding tree to update.
+     */
+    learn_from_instance(X, y, weight, ht) {
+        return;
+    }
+}
+
+class InactiveLearningNode extends LearningNode {
+    /**
+     * Inactive learning node is th enode that does not grow.
+     *
+     * @param {array} initial_class_observations    Initial class observations (dictionary (class_value, weight) or null).
+     */
+    constructor(initial_class_observations = null) {
+        super(initial_class_observations);
+    }
+
+    /**
+     * Update the node with the provided instance.
+     *
+     * @param {instance} X                  Instance attributes for updating the node (array of length equal to number of features).
+     * @param {int} y                       Instance class.
+     * @param {float} weight                Instance weight.
+     * @param {HoeffdingTree} htinstance    Hoeffding tree to update.
+     */
+    learn_from_instance(X, y, weight, ht) {
+        try {
+            this._observed_class_distribution[y] += weight;
+        } catch(e) {
+            // TODO: will this work?
+            this._observed_class_distribution[y] = weight;
+        }
+
+    }
+}
+
+class ActiveLearningNode extends LearningNode {
+    /**
+     * Learning node that supports growth.
+     *
+     * @param {array} initial_class_observations    Initial class observations (dictionary (class_value, weight) or null).
+     */
+    constructor(initial_class_observations) {
+        super(initial_class_observations);
+        this._weight_seen_at_last_split_evaluation = self.get_weight_seen();
+        this._attribute_observers = {};
+    }
+
+    /**
+     * Update the node with the provided instance.
+     *
+     * @param {instance} X                  Instance attributes for updating the node (array of length equal to number of features).
+     * @param {int} y                       Instance class.
+     * @param {float} weight                Instance weight.
+     * @param {HoeffdingTree} htinstance    Hoeffding tree to update.
+     */
+    learn_from_instance(X, y, weight, ht) {
+        try {
+            this._observed_class_distribution[y] += weight;
+        } catch(e) {
+            // TODO: will this work?
+            this._observed_class_distribution[y] = weight;
+        }
+
+        let obs;
+
+        for (let i = 0; i < X.length; i++) {
+            try {
+                obs = this._attribute_observers[i];
+            } catch(e) {
+                if (ht.nominal_attributes.indexOf(i) >= 0) {
+                    obs = NominalAttributeClassObserver();
+                } else {
+                    obs = NumericAttributeClassObserverGaussian();
+                }
+                this._attribute_observers[i] = obs;
+            }
+            obs.observe_attribute_class(X[i], y, weight);
+        }
+    }
+
+    /**
+     * Calculate the total weight seen by the node.
+     *
+     * Returns total weight seen (float).
+     */
+    get_weight_seen() {
+        let dict_values = Object.keys(this._observed_class_distribution).map(key => this._observed_class_distribution[key]);
+        let total_seen = dict_values.reduce((a, b) => a + b, 0);
+        return total_seen;
+    }
+
+    /**
+     * Retrieve the weight seen at last split evaluation.
+     *
+     * Returns weight seen at last split evaluation (float).
+     */
+    get_weight_seen_at_last_split_evaluation() {
+        return this._weight_seen_at_last_split_evaluation;
+    }
+
+    /**
+     * Retrieve the weight seen at last split evaluation.
+     *
+     * @param {float} weight     Weight seen at last split evaluation.
+     */
+    set_weight_seen_at_last_split_evaluation(weight) {
+        this._weight_seen_at_last_split_evaluation = weight;
+    }
+
+    /**
+     * Find possible split candidates.
+     *
+     * @param {SplitCriterion} criterion    The splitting criterion to be used.
+     * @param {HoeffdingTree} ht            Hoeffding tree.
+     *
+     * Returns list of split candidates.
+     */
+    get_best_split_suggestions(criterion, ht) {
+        let best_suggestions = [];
+        let pre_split_dist = this._observed_class_distribution;
+
+        if (!ht.no_preprune) {
+            let null_split = AttributeSplitSuggestion(null, [{}], criterion.get_merit_of_split(pre_split_dist, [pre_split_dist]));
+            best_suggestions.append(null_split);
+        };
+
+        for (let i in this._attribute_observers) {
+            obs = this._attribute_observers[i];
+            best_suggestion = obs.get_best_evaluated_split_suggestion(criterion, pre_split_dist, i, ht.binary_split);
+
+            if (best_sugestion != null) {
+                best_suggestions.append(best_suggestion);
+            }
+        }
+        return best_suggestions;
+    }
+
+    /**
+     * Disable attribute observer.
+     *
+     * @param {int} att_idx     Attribute index.
+     */
+    disable_attribute(att_idx) {
+        if (this._attribute_observers.indexOf(att_idx) >= 0) {
+            this._attribute_observers[att_idx] = AttributeClassObserverNull();
+        }
+    }
 }
 
 
