@@ -16,10 +16,9 @@
     "url": "https://github.com/klemenkenda/qstream/issues"
   },
   "homepage": "https://github.com/klemenkenda/qstream#readme",
-  "dependencies": {
-    "mocha": "^5.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "rewire": "^4.0.1"
+    "rewire": "^4.0.1",
+    "mocha": "^5.2.0"
   }
 }
