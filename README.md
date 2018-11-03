@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/klemenkenda/QStream.svg?branch=master)](https://travis-ci.org/klemenkenda/QStream)
 [![codecov](https://codecov.io/gh/klemenkenda/QStream/branch/master/graph/badge.svg)](https://codecov.io/gh/klemenkenda/QStream)
 [![npm version](https://badge.fury.io/js/%40klemenkenda%2Fqstream.svg)](https://badge.fury.io/js/%40klemenkenda%2Fqstream)
+[![dependencies Status](https://david-dm.org/klemenkenda/qstream/status.svg)](https://david-dm.org/klemenkenda/qstream)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 # QStream
 
