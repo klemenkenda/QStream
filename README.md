@@ -1,5 +1,6 @@
-[![codecov](https://codecov.io/gh/klemenkenda/QStream/branch/master/graph/badge.svg)](https://codecov.io/gh/klemenkenda/QStream)
 [![Build Status](https://travis-ci.org/klemenkenda/QStream.svg?branch=master)](https://travis-ci.org/klemenkenda/QStream)
+[![codecov](https://codecov.io/gh/klemenkenda/QStream/branch/master/graph/badge.svg)](https://codecov.io/gh/klemenkenda/QStream)
+[![npm version](https://badge.fury.io/js/%40klemenkenda%2Fqstream.svg)](https://badge.fury.io/js/%40klemenkenda%2Fqstream)
 
 # QStream
 

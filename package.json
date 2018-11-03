@@ -1,5 +1,5 @@
 {
-  "name": "qstream",
+  "name": "@klemenkenda/qstream",
   "version": "0.0.1",
   "description": "JavaScript streaming library.",
   "main": "index.js",
