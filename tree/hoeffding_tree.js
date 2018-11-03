@@ -173,7 +173,128 @@ class Node {
 }
 
 class SplitNode extends Node {
+    /**
+     * Node that splits the data in a Hoeffding Tree.
+     *
+     * @param {string} split_test           Split test. TODO: check???
+     * @param {dict} class_observations     Class observations represented in dict (class_value, weight) or null.
+     */
+    constructor(split_test, class_observations) {
+        super();
+        this._split_test = split_test;
+        this.children = {}; // TODO: check why list, not array
+    }
 
+    /**
+     * Count the number of children for a node.
+     */
+    num_children() {
+        return this._children.length
+    }
+
+    /**
+     * Set node as a child.
+     *
+     * @param {int} index   Branch index where the node will be inserted.
+     * @param {Node} node   The node to insert.
+     */
+    set_child(index, node) {
+        if ((this._split_test.max_branches() >= 0) && (index >= this._split_test.max_branches())) {
+            throw new RangeError("set_child index mismatch");
+        }
+        // TODO: check size; should we use push?
+        this._children[index] = node;
+    }
+
+    /**
+     * Retrieve a node's child given its branch index.
+     *
+     * @param {int} index   Branch index of the child.
+     *
+     * Returns child node of type HoeffdingTree.Node or null.
+     */
+    get_child(index) {
+        if ((index > 0) && (index < this._children.length)) {
+            this._children[index];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get the branch index for a given instance at the current node.
+     *
+     * @param {instance} X     Instance to find the child.
+     */
+    instance_child_index(X) {
+        return this._split_test.branch_for_instance(X);
+    }
+
+    /**
+     * This is a split node, not a leaf.
+     */
+    is_leaf() {
+        return false;
+    }
+
+    /**
+     * Traverse down the tree to locate the corresponding leaf for an instance.
+     *
+     * @param {instance} X          Data instance, array (n_features). TODO: recheck!
+     * @param {Node} parent         Parent node of type HoeffdingTree.Node.
+     * @param {int} parent_branch   Parent branch index.
+     *
+     * Returns lef node for the instance (of type FoundNode).
+     */
+    filtern_instance_to_leaf(X, parent, parent_branch) {
+        let child_index = this.instance_child_index(X);
+        if (child_index >= 0) {
+            child = this.get_child(child_index);
+            if (child != null) {
+                return child_index.filter_instance_to_leaf(X, this, child_index);
+            } else {
+                return new FoundNode(this, child_index);
+            }
+        } else {
+            return new FoundNode(parent, parent_branch);
+        }
+    }
+
+    /**
+     * Calculate the depth of the subtree from this node.
+     *
+     * Returns subtree depth (integer). Value is 0 if it is a leaf.
+     */
+    subtree_depth() {
+        // initial depth
+        let max_child_depth = 0;
+
+        // transverse children and find the one with the deepest subtree
+        for (let i in this._children) {
+            let child = this._children[i];
+            if (child != null) {
+                let depth = child.subtree_depth();
+                if (depth > max_child_depth) {
+                    max_child_depth = depth;
+                }
+            }
+        }
+
+        return max_child_depth + 1;
+    }
+
+    /**
+     * Walk the tree and write its structure to a buffer string.
+     *
+     * @param {HoeffdingTree} ht    The tree to describe.
+     * @param {string} buffer       The buffer where the tree's structure will be stored.
+     * @param {int} indent          Indentation level (number of white spaces for current node).
+     */
+
+    // TODO: ht and buffer are not needed?
+    describe_subtree(ht, buffer, indent = 0) {
+        // TODO: no implementation yet.
+    }
 }
 
 class LearningNode extends Node {
