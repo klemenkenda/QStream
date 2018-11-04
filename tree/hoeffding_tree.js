@@ -506,6 +506,63 @@ class LearningNodeNB extends LearningNode {
     }
 }
 
+class LearningNodeNBAdaptive extends LearningNodeNB {
+    /**
+     * Learning node that uses Adaptive Naive Bayes models.
+     *
+     * @param {array} initial_class_observations    Initial class observations (dictionary (class_value, weight) or null).
+     */
+    constructor(initial_class_observations) {
+        super(initial_class_observations);
+        this._mc_correct_weight = 0.0;
+        this._nb_correct_weight = 0.0;
+    }
 
+    /**
+     * Update the node with the provided instance.
+     *
+     * @param {instance} X                  Instance attributes for updating the node (array of length equal to number of features).
+     * @param {int} y                       Instance class.
+     * @param {float} weight                Instance weight.
+     * @param {HoeffdingTree} htinstance    Hoeffding tree to update.
+     */
+    learn_from_instance(X, y, weight, ht) {
+        if (this._observed_class_distribution == {}) {
+            // all classes equal, default to class 0
+            if (y == 0) {
+                this._mc_correct_weight += weight;
+            }
+        } else if (Math.max(...Object.keys(this._observed_class_distribution).map(key => this._observed_class_distribution[key])) == y) {
+            this._mc_correct_weight += weight;
+        }
+
+        let nb_prediction = do_naive_bayes_prediction(X, this._observed_class_distribution, this._attribute_observers);
+
+        Math.max(...Object.keys(a).map(key => a[key]))
+
+        if (Math.max(...Object.keys(nb_prediction).map(key => nb_prediction[key])) == y) {
+            this._nb_correct_weight += weight;
+        }
+
+        super.learn_from_instance(X, y, weight, ht);
+    }
+
+    /**
+     * Get the votes per class for a given instance.
+     *
+     * @param {instance} X          Instance attributes.
+     * @param {HoeffdingTree} ht    Hoeffding tree.
+     *
+     * Returns class votes for the given instance in the form of dictionary (class_value, weight).
+     */
+    get_class_votes(X, ht) {
+        // returns either majority class or naive bayes
+        if (this._mc_correct_weight > this._nb_correct_weight) {
+            return this._observed_class_distribution;
+        } else {
+            return do_naive_bayes_prediction(X, this._observed_class_distribution, this._attribute_observers);
+        }
+    }
+}
 
 module.exports = HoeffdingTree;
