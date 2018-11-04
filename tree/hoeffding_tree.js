@@ -3,7 +3,7 @@ let StreamModel = core.StreamModel;
 let NominalAttributeClassObserver = require('./nominal_attribute_class_observer.js');
 let NumericAttributeClassObserverGaussian = require('./numeric_attribute_class_observer_gaussian.js');
 let AttributeClassObseverNull = require('./attribute_class_observer_null.js');
-let do_naive_bayes_prediction = require('../utils/utils.js').do_naive_bayes_prediction;
+let do_naive_bayes_prediction = require('./utils.js');
 
 class HoeffdingTree extends StreamModel {
     /**
@@ -491,7 +491,7 @@ class LearningNodeNB extends LearningNode {
         if (this.get_weight_seen() >= ht.nb_threshold) {
             return do_naive_bayes_prediction(X, this._observed_class_distribution, this._attribute_observers);
         } else {
-            super().get_class_votes(X, ht);
+            super.get_class_votes(X, ht);
         }
     }
 
