@@ -51,6 +51,17 @@ class HoeffdingTree extends StreamModel {
         this.leaf_prediction = leaf_prediction;
         this.nb_threshold = nb_threshold;
         this.nominal_attributes = nominal_attributes;
+
+        this._tree_root = null;
+        this._decision_node_cnt = 0;
+        this._active_leaf_node_cnt = 0;
+        this._inactive_leaf_node_cnt = 0;
+        this._inactive_leaf_byte_size_estimate = 0.0;
+        this._active_leaf_byte_size_estimate = 0.0;
+        this._byte_size_estimate_overhead_fraction = 1.0;
+        this._growth_allowed = true;
+        this._train_weight_seen_by_mode = 0.0;
+        this._classes = null;
     }
 
 }
