@@ -60,10 +60,164 @@ class HoeffdingTree extends StreamModel {
         this._active_leaf_byte_size_estimate = 0.0;
         this._byte_size_estimate_overhead_fraction = 1.0;
         this._growth_allowed = true;
-        this._train_weight_seen_by_mode = 0.0;
+        this._train_weight_seen_by_model = 0.0;
         this._classes = null;
     }
 
+    // leaving simple property setters and getters out as the
+    // properties of the object are accessible/public
+
+    // TODO: split criterion setter has some additional internal logic
+    // to check whether the existing criterion has been used
+
+    // TODO: leaf prediction setter has the same logic as criterion setter
+
+    /**
+     * Setting nominal attributes.
+     *
+     * @param {array} nominal_attributes Array of keys of nominal attributes.
+     */
+    nominal_attributes(nominal_attributes) {
+        if (nominal_attributes == null) {
+            nominal_attributes = [];
+        }
+        this._nominal_attributes = nominal_attributes;
+    }
+
+    /**
+     * Calculate the size of the tree.
+     *
+     * Returns size of the tree in bytes (int).
+     */
+    measure_byte_size() {
+        return calculate_object_size(this);
+    }
+
+    /**
+     * Reset the Hoeffding Tree to default values.
+     */
+    reset() {
+        this._tree_root = null;
+        this._decision_node_cnt = 0;
+        this._active_leaf_node_cnt = 0;
+        this._inactive_leaf_node_cnt = 0;
+        this._inactive_leaf_byte_size_estimate = 0.0;
+        this._active_leaf_byte_size_estimate = 0.0;
+        this._byte_size_estimate_overhead_fraction = 1.0;
+        this._growth_allowed = true;
+        if (this._leaf_prediction != MAJORITY_CLASS) {
+            this._remove_poor_atts = null;
+        }
+        this._train_weight_seen_by_model = 0.0;
+    }
+
+    /**
+     * Fit method is not implemented.
+     */
+    fit(X, y, clases = null, weight = null) {
+        throw new TypeError("fit not implemented for Hoeffding tree");
+    }
+
+    /**
+     * Incrementally trains the model. Train samples (instances) are composed of X attributes and their
+     * corresponding targets y.
+     *
+     * Tasks performed before training:
+     * - If more than one instance is passed, loop through X and pass instances one at a time.
+     * - Update weight seen by model.
+     *
+     * Training tasks:
+     * - If the tree is empty, create a leaf node as the root.
+     * - If the tree is already initialized, find the corresponding leaf for the instance and update the leaf node statistics.
+     * - If growth is allowed and the number of instances that the leaf has observed between split attempts exceed the grace period then attempt to split.
+     *
+     * @param {array} X         Instance attributes of size (n_samples, n_features).
+     * @param {array} y         Classes (targets) for all samples in X.
+     * @param {array} classes   Contains the class values in the stream. If defined, will be used to define the length of the arrays returned by `predict_proba`.
+     * @param {array} weight    Instance weight. If not provided, uniform weights are assumed.
+     */
+    partial_fit(X, y, classes = null, weight = null) {
+        if ((this._classes == null) && (classes!= null)) {
+            this._classes = classes;
+        }
+
+        if (y != null) {
+            // check dimensions of X
+            if (X[0].constructor !== Array) {
+                // we are dealing with a single sample, we convert it to 2d array
+                X = [X];
+            }
+            let row_cnt = X.length;
+
+            // if weight is null, assume uniform weights
+            if (weight == null) {
+                weight = new Array(row_cnt).fill(1.0);
+            }
+
+            // check y, weight and X dimensions
+            if (row_cnt != weight.length) {
+                throw new RangeError("Hoeffding tree X and weight length mismatch!");
+            }
+
+            if (row_cnt != y.length) {
+                throw new RangeError("Hoeffding tree X and y length mismatch!");
+            }
+
+            for (let i = 0; i < row_cnt; i++) {
+                if (weight[i] != 0) {
+                    this._train_weight_seen_by_model += weight[i];
+                    this._partial_fit(X[i], y[i], weight[i]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Trains the model on sample X and target y (single example).
+     * This is private function, where acctual training is done.
+     *
+     * @param {Instance} X      Single instance.
+     * @param {int} y           Single target for instance.
+     * @param {float} weight    Single weight.
+     */
+    _partial_fit(X, y, weight) {
+        // create root node if there is none
+        if (this._tree_root == null) {
+            this._tree_root = this._new_learning_node();
+            this._active_leaf_node_cnt = 1;
+        }
+
+        // transverse the instance to the leaf
+        let found_node = this._tree_root.filter_instance_to_leaf(X, null, -1);
+        let leaf_node = found_node.node;
+
+        // if leaf is empty, then create new learning node there
+        if (leaf_node == null) {
+            leaf_node = this._new_learning_node();
+            found_node.parent.set_child(found_node.parent_branch, leaf_node);
+            this._active_leaf_node_cnt++;
+        }
+
+        // is leaf node instance of learning node
+        if (leaf_node instanceof LearningNode) {
+            let learning_node = leaf_node;
+            learning_node.learn_from_instance(X, y, weight, this);
+            // TODO: undestand this!!!
+            if ((this._growth_allowed) && (learning_node instanceof ActiveLearningNode)) {
+                let active_learning_node = learning_node;
+                let weight_seen = active_learning_node.get_weight_seen();
+                let weight_diff = weight_seen - active_learning_node.get_weight_seen_at_last_split_evaluation();
+                if (weight_diff >= this.grace_period) {
+                    this._attempt_to_split(active_learning_node, found_node.parent, found_node.parent_branch);
+                    active_learning_node.set_weight_seen_at_last_split_evaluation(weight_seen);
+                }
+            }
+        }
+
+        if (this._train_weight_seen_by_model % this.memory_estimate_period == 0) {
+            this.estimate_model_byte_size();
+        }
+    }
 }
 
 class FoundNode {
@@ -261,7 +415,7 @@ class SplitNode extends Node {
      *
      * Returns lef node for the instance (of type FoundNode).
      */
-    filtern_instance_to_leaf(X, parent, parent_branch) {
+    filter_instance_to_leaf(X, parent, parent_branch) {
         let child_index = this.instance_child_index(X);
         if (child_index >= 0) {
             child = this.get_child(child_index);
