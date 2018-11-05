@@ -218,6 +218,85 @@ class HoeffdingTree extends StreamModel {
             this.estimate_model_byte_size();
         }
     }
+
+    /**
+     * Get class votes for a single instance.
+     *
+     * @param {Instance} X      Instance attributes.
+     *
+     * Returns dictionary (class_value, weight).
+     */
+    get_votes_for_instance(X) {
+        if (this._tree_root == null) {
+            let found_node = this._tree_root.filter_instance_to_leaf(X, null, -1);
+            let leaf_node = found_node.node;
+
+            if (leaf_node == null) {
+                leaf_node = found_node.parent;
+            }
+
+            return leaf_node.get_class_votes(X);
+        } else {
+            return {};
+        }
+    }
+
+    /**
+     * Predicts the label of the X instance(s).
+     *
+     * @param {array} X     An array of instances.
+     *
+     * Returns predicted labels for all instances in X.
+     */
+    predict(X) {
+        // TODO: do we check input - so that it is array of instances?
+        let predictions = [];
+        let y_proba = this.predict_proba(X);
+        for (let j = 0; j < X.length; j++) {
+            // argmax(y_proba[j])
+            let index = y_proba[j].map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
+            predictions.push(index);
+        }
+        return(predictions);
+    }
+
+    /**
+     * Predicts probabilities of all label of the X instance(s).
+     *
+     * @param {array} X     An array of instances.
+     *
+     * Returns predicted probabilities for all labels for all instances in X.
+     */
+    predict_proba(X) {
+        let predictions = [];
+
+        for (let i = 0; i < X.length; i++) {
+            let votes = this.get_votes_for_instance(X[i]);
+            if (votes == {}) {
+                // if tree is empty, all classes equal, default to zero
+                predictions.push([0]);
+            } else {
+                let dict_values = Object.keys(votes).map(key => votes[key]);
+                let sum = dict_values.reduce((a, b) => a + b, 0);
+                if (sum != 0) {
+                    normalize_values_in_dict(votes);
+                }
+                let y_proba;
+                if (this._classes != null) {
+                    y_proba = new Array(Math.max(...this._classes) + 1).fill(0);
+                } else {
+                    y_proba = new Array(Math.max(votes.keys()) + 1);
+                }
+                for (let key in votes) {
+                    let value = votes[key];
+                    y_proba[int(key)] = value;
+                }
+                predictions.push(y_proba);
+            }
+        }
+
+        return(predictions);
+    }
 }
 
 class FoundNode {
