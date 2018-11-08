@@ -1,4 +1,6 @@
-class WaveformGenerator{
+let Stream = require('./base_stream.js')
+
+class WaveformGenerator extends Stream{
 
     constructor(has_noise = false, random_state = null){
         
@@ -132,16 +134,16 @@ class WaveformGenerator{
             
             
         }
-        let current_sample_x = [];
-        let current_sample_y = [];
+        this.current_sample_x = [];
+        this.current_sample_y = [];
+
 
         for (let k = 0; k < batch_size; k++){
-            current_sample_x.push(data[k].slice(0, this.n_num_features));
-            current_sample_y.push(data[k][this.n_num_features]);
-
+            this.current_sample_x.push(data[k].slice(0, this.n_num_features));
+            this.current_sample_y.push(data[k][this.n_num_features]);
         }
 
-        return [current_sample_x, current_sample_y]
+        return [this.current_sample_x, this.current_sample_y]
     }
 
 
@@ -154,6 +156,5 @@ class WaveformGenerator{
 
         return info
     }
-
-
 }
+module.exports = WaveformGenerator;
