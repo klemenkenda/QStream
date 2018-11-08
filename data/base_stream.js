@@ -22,10 +22,10 @@ class Stream{
     }
 
     last_sample(){
-        /*
-        Retrieves last `batch_size` samples in the stream.
+        /** 
+        * Retrieves last `batch_size` samples in the stream.
          */
-        return [this.current_sample_x, this.current_sample_y];
+        return ([this.current_sample_x, this.current_sample_y]);
     }
 
     is_restartable(){
@@ -37,18 +37,16 @@ class Stream{
     }
 
     n_remaining_samples(){
-        return -1;
+        return (-1);
     }
 
-    has_mors_samples(){
-        return true;
+    has_more_samples(){
+        return (true);
     }
 
     get_data_info(){
         let info = this.name + '\n' +this.n_targets + ' targets\n'+ this.n_classes + ' classes\n' + this.n_features + ' features';
-        return info;
+        return (info);
     }
- 
-
 }
 module.exports = Stream;
