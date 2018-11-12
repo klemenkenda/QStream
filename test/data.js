@@ -201,7 +201,7 @@ describe('waveform_generator', function() {
             assert.ok(next_sample[1][1] == 0 || next_sample[1][1] == 1 || next_sample[1][1] == 2);
         });
 
-        it('test if average of waveform samples is simetric', function() {
+        it('test if average of waveform samples is symetric', function() {
             let n = 2000;
             samples = stream.next_sample(n);
             for(let j = 2; j != 11; j++) {
