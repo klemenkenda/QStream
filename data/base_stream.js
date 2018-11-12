@@ -16,7 +16,7 @@ class Stream{
         this.target_values = null;
         this.name = null;
     }
-    
+
     prepare_for_use() {
         /*
          * Prepare the stream for use. Can be the reading of a file, or
@@ -31,7 +31,7 @@ class Stream{
     }
 
     last_sample() {
-        /** 
+        /**
          * Retrieves last `batch_size` samples in the stream.
          */
         return ([this.current_sample_x, this.current_sample_y]);
@@ -87,4 +87,5 @@ class Stream{
         return 'stream';
     }
 }
+
 module.exports = Stream;
