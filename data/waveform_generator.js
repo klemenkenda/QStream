@@ -36,12 +36,12 @@ class WaveformGenerator extends Stream {
         }
         this.n_features = this.n_num_features;
         this.feature_names =[];
-        for(let i = 0; i<this.n_features; i++) {
+        for (let i = 0; i < this.n_features; i++) {
             this.feature_names.push('att_num_' + i);
         }
         this.target_names = ['target_0']; 
         this.target_values = []
-        for(let i = 0; i<this.n_classes; i++) {
+        for (let i = 0; i<this.n_classes; i++) {
             this.target_values.push(i);
         }
     }
@@ -117,7 +117,7 @@ class WaveformGenerator extends Stream {
             data.push(new Array(dimensions[1]).fill(0));
         };
 
-        for(let j = 0; j < batch_size; j++) {
+        for (let j = 0; j < batch_size; j++) {
             this.sample_idx += 1;
             let group = Math.floor(Math.random() * this.n_classes);
             let choice_a = group == 2 ? 1 : 0;
@@ -128,7 +128,7 @@ class WaveformGenerator extends Stream {
                 data[j][i] = multiplier_a * this.h_function[choice_a][i] + multiplier_b * this.h_function[choice_b][i] + utils.rand_gauss();
             };
 
-            if(this.has_noise) {
+            if (this.has_noise) {
                 for (let i = this.n_featu; i < this.n_num_features; i++) {
                     data[j][i] = utils.rand_gauss();
                 };
