@@ -35,5 +35,13 @@ class Utils {
         }
 
     }
+
+    random_int(random_state, min, max) {
+        /**
+         * Random int between min (included) and max (excluded)
+         */
+        let rand_int = Math.floor(this.random(random_state = random_state) * (max - min)) + min;
+        return (rand_int);
+    }
 }
 module.exports = Utils;
