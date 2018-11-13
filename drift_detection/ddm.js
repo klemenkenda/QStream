@@ -14,6 +14,10 @@
 // includes
 let BaseDriftDetector = require('./base_drift_detector.js');
 
+/**
+ * Drift Detection Method class.
+ * @extends BaseDriftDetector
+ */
 class DDM extends BaseDriftDetector {
     /**
      * Drift Detection Method (based on scikit-multiflow implementation)

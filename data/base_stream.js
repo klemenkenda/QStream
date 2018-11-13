@@ -1,5 +1,8 @@
-class Stream{
-
+/** Abstract class for a stream generator. */
+class Stream {
+    /**
+     * Create the stream generator and initialize the properties.
+     */
     constructor() {
         this.n_samples = 0;
         this.n_targets = 0;
