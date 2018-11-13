@@ -82,9 +82,12 @@ describe('waweform_generator', function() {
         });
 
         it('test if average of waveform samples is simetric', function() {
+            let stream2 = new WaveformGenerator(has_noise = false, random_state = 7777);
+            stream.prepare_for_use();
+
             let n = 2000;
-            samples = stream.next_sample(n);
-            for(let j = 2; j != 11; j++) {
+            samples = stream2.next_sample(n);
+            for(let j = 3; j != 11; j++) {
                 let sum1 = 0;
                 let sum2 = 0;
                 for(let i = 1; i < n; i++) {
@@ -194,9 +197,12 @@ describe('waweform_generator', function() {
         });
 
         it('test if average of waveform samples is simetric', function() {
+            let stream2 = new WaveformGenerator(has_noise = false, random_state = 7777);
+            stream.prepare_for_use();
+
             let n = 2000;
-            samples = stream.next_sample(n);
-            for(let j = 2; j != 11; j++) {
+            samples = stream2.next_sample(n);
+            for(let j = 3; j != 11; j++) {
                 let sum1 = 0;
                 let sum2 = 0;
                 for(let i = 1; i < n; i++) {

@@ -12,12 +12,14 @@ class WaveformGenerator extends Stream {
      * Parameters
      * ----------
      * has_noise: bool
-     *    if True additional 19 insignificant will be added. (Default: False) */
+     *    if True additional 19 insignificant will be added. (Default: False) 
+     * random_state: int
+     */
 
     constructor(has_noise = false, random_state = null) {
         super();
-        this.original_random_state = random_state; // random state not used
-        this.random_state = null; 
+        this.original_random_state = false ? random_state == null : true;
+        this.random_state = random_state;
         this.has_noise = has_noise;
         this.n_featu = 21; // number of features when has_noise = false
     	this.n_num_features = this.n_featu;
@@ -110,7 +112,7 @@ class WaveformGenerator extends Stream {
          *     for the batch_size samples that were requested.
          */
 
-        let utils = new Utils()
+        let random = new Utils(this.original_random_state)
         let data = [];
         let dimensions = [batch_size, this.n_features + 1]
         for (let i = 0; i < dimensions[0]; ++i) {
@@ -119,18 +121,20 @@ class WaveformGenerator extends Stream {
 
         for (let j = 0; j < batch_size; j++) {
             this.sample_idx += 1;
-            let group = Math.floor(Math.random() * this.n_classes);
+            let group = Math.floor(random.random(this.random_state) * this.n_classes);
             let choice_a = group == 2 ? 1 : 0;
             let choice_b = group == 0 ? 1 : 2;
-            let multiplier_a = Math.random();
+            let multiplier_a = random.random(this.random_state);
             let multiplier_b = 1.0 - multiplier_a;
             for (let i = 0; i <= this.n_featu - 1; i++) {
-                data[j][i] = multiplier_a * this.h_function[choice_a][i] + multiplier_b * this.h_function[choice_b][i] + utils.rand_gauss();
+                data[j][i] = multiplier_a * this.h_function[choice_a][i] 
+                           + multiplier_b * this.h_function[choice_b][i] 
+                           + random.rand_gauss(this.random_state);
             };
 
             if (this.has_noise) {
                 for (let i = this.n_featu; i < this.n_num_features; i++) {
-                    data[j][i] = utils.rand_gauss();
+                    data[j][i] = random.rand_gauss(this.random_state);
                 };
             };
 

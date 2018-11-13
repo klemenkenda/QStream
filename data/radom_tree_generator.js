@@ -165,13 +165,17 @@ class RandomTreeGenerator extends Stream {
          * we guarantee that none of its children will split on the same attribute, 
          * as it would have no use for that split. 
          */
-        let leaf = new Node();
-        if (current_depth >= this.max_tree_depth 
-            || (current_depth>= this.min_leaf_depth
-            && this.fraction_of_leaves_per_level >= (1.0 - Math.random()))) {
+
+        if (true) {
+            let leaf = new Node();
             leaf.class_label = Math.floor(Math.random() * this.n_classes);
+            console.log(leaf)
+            return leaf;
         }
-        return leaf;
+        
+
+
+        // ni še končano
     }
 }
 
@@ -196,9 +200,9 @@ class Node{
      *     split_att_value.
      */
     constructor(){
-        this.class_label = class_label
-        this.split_att_index = split_att_index
-        this.split_att_value = split_att_value
+        this.class_label = null
+        this.split_att_index = null
+        this.split_att_value = null
         this.children = []
     }
 }
