@@ -51,9 +51,13 @@ class RandomTreeGenerator extends Stream {
                 fraction_leaves_per_level = 0.15) {
         super()
         this.tree_random_state = tree_random_state;
-        this.original_tree_random_state = tree_random_state == null ? false : true;;
+        this.bool_tree_random_state = tree_random_state == null ? false : true;
         this.sample_random_state = sample_random_state;
-        this.original_sample_random_state = sample_random_state == null ? false : true;
+        this.bool_sample_random_state = sample_random_state == null ? false : true;
+
+        this.random1 = new Utils(this.tree_random_state);
+        this.random2 = new Utils(this.sample_random_state);
+ 
         this.n_classes = n_classes;
         this.n_targets = 1;
         this.n_num_features = n_num_features;
@@ -65,34 +69,33 @@ class RandomTreeGenerator extends Stream {
         this.fraction_of_leaves_per_level = fraction_leaves_per_level;
         this.tree_root = null;
         this.sample_random_state = null;
-        this.name = "Random Tree Generator";
+        this.name = 'Random Tree Generator';
         this.configure();
     }
 
-    configure(){
+    configure() {
         this.target_names = ['class'];
         this.feature_names =[];
         for (let i = 0; i < this.n_num_features; i++) {
             this.feature_names.push('att_num_' + i);
         }
-
         for (let i =0; i < this.n_cat_features; i++) {
             for (let j = 0; j < this.n_categories_per_cat_feature; j++) {
                 this.feature_names.push('att_nom' + i + '_val' + j);
             }
         }
-        this.target_values = []
+        this.target_values = [];
         for (let i = 0; i<this.n_classes; i++) {
             this.target_values.push(i);
         }
     }
 
-    prepare_for_use(){
+    prepare_for_use() {
         this.sample_idx = 0;
         this.generate_random_tree();
     }
 
-    generate_random_tree(){
+    generate_random_tree() {
         /* generate_random_tree
          *
          * Generates the random tree, starting from the root node and following 
@@ -107,16 +110,15 @@ class RandomTreeGenerator extends Stream {
         let nominal_att_candidates = [];
         let min_numeric_value = [];
         let max_numeric_value = [];
-
-        for (let i = 0; i < this.n_num_features; i++){
+        for (let i = 0; i < this.n_num_features; i++) {
             min_numeric_value.push(0.0);
             max_numeric_value.push(1.0);
         }
-
         for (let i = 0; i< this.n_num_features+this.n_cat_features; i++) {
             nominal_att_candidates.push(i);
         }
-        this.tree_root = this.generate_random_tree_node(0, nominal_att_candidates, min_numeric_value, max_numeric_value, tree_random_state);
+        this.tree_root = this.generate_random_tree_node(0, nominal_att_candidates, min_numeric_value,
+            max_numeric_value, tree_random_state);
     }
 
     generate_random_tree_node(current_depth, nominal_att_candidates, min_numeric_value, max_numeric_value, random_state) {
@@ -169,25 +171,23 @@ class RandomTreeGenerator extends Stream {
          * as it would have no use for that split. 
          */
 
-        let random = new Utils(this.original_tree_random_state)
+        let random = this.random1;
         let node = new Node();
-
         if ((current_depth >= this.max_tree_depth) 
             || ((current_depth >= this.min_leaf_depth)  
-            && (this.fraction_of_leaves_per_level >= (1.0 - random.random())))) {
+            && (this.fraction_of_leaves_per_level >= (1.0 - random.random(this.bool_tree_random_state))))) {
             let leaf = new Node();
-            leaf.class_label = Math.floor(random.random() * this.n_classes);
+            leaf.class_label = Math.floor(random.random(this.bool_tree_random_state) * this.n_classes);
             return leaf;
         }
         
         let chosen_att = random.random_int(random_state, 0, nominal_att_candidates.length);
-
         if(chosen_att < this.n_num_features) {
             let numeric_index = chosen_att;
             node.split_att_index = numeric_index;
             let min_val = min_numeric_value[numeric_index];
             let max_val = max_numeric_value[numeric_index];
-            node.split_att_value = ((max_val - min_val) * random.random() + min_val);
+            node.split_att_value = ((max_val - min_val) * random.random(this.bool_tree_random_state) + min_val);
             node.children = [];
 
             let new_max_value = max_numeric_value;
@@ -207,13 +207,12 @@ class RandomTreeGenerator extends Stream {
         }
         else {
             node.split_att_index = nominal_att_candidates[chosen_att];
-            let new_nominal_candidates = []
+            let new_nominal_candidates = [];
             for(let i = 0; i < nominal_att_candidates.length; i++) {
-                if(nominal_att_candidates[i] != node.split_att_index){
+                if(nominal_att_candidates[i] != node.split_att_index) {
                     new_nominal_candidates.push(nominal_att_candidates[i]);
                 }
             }
-
             for(let i =0;i < this.n_categories_per_cat_feature ; i++) {
                 node.children.push(this.generate_random_tree_node(current_depth + 1,
                                                                     new_nominal_candidates,
@@ -222,7 +221,7 @@ class RandomTreeGenerator extends Stream {
                                                                     random_state));
             }
         }
-        return node;
+        return (node);
     }
 
     classify_instance(node, att_values) {
@@ -249,16 +248,17 @@ class RandomTreeGenerator extends Stream {
         */
 
         if(node.children.length == 0) {
-            return node.class_label;
+            return (node.class_label);
         }
 
         if(node.split_att_index < this.n_num_features) {
-            aux = att_values[node.split_att_index] ? 1 : 2;
-            return this.classify_instance(node.children[aux], att_values);
+            let aux = att_values[node.split_att_index] ? 1 : 2;
+            return (this.classify_instance(node.children[aux], att_values));
         }
         else {
-            return [this.classify_instance(node.children[this.get_integer_nominal_attribute_representation(node.split_att_index, att_values)]),
-                    att_values]
+            return (this.classify_instance(
+                node.children[this.get_integer_nominal_attribute_representation(node.split_att_index, att_values)],
+                 att_values));
         }
     }
 
@@ -287,20 +287,21 @@ class RandomTreeGenerator extends Stream {
         */
 
         let min_index = this.n_num_features + (nominal_index - this.n_num_features) * this.n_categories_per_cat_feature
+
         for(let i = 0; i < this.n_categories_per_cat_feature; i++) {
-            if (att_values[Math.floor(min_index)]==1) {
+            if (att_values[Math.floor(min_index)] == 1) {
                 return (i);
             }
             min_index += 1;
         }
-        return None;
+        return (null);
     }
 
     n_remaining_samples() {
         return (-1);
     }
 
-    has_more_samples(){
+    has_more_samples() {
         return (true);
     }
 
@@ -322,38 +323,64 @@ class RandomTreeGenerator extends Stream {
          *     batch_size samples that were requested.
          */
 
-        let random = new Utils()
+        let random = this.random2;
         let num_attributes = -1;
         let data = [];
-        let dimensions = [batch_size, this.n_num_features + (this.n_cat_features * this.n_categories_per_cat_feature) + 1];
+        let dimensions = [batch_size, this.n_num_features 
+            + (this.n_cat_features * this.n_categories_per_cat_feature) + 1];
         for(let i = 0; i < dimensions[0]; ++i) {
             data.push(new Array(dimensions[1]).fill(0));
         };
 
         for(let j = 0; j < batch_size; j++) {
             for(let i = 0; i < this.n_num_features; i++) {
-                data[j][i] = random.random(this.original_sample_random_state);
+                data[j][i] = random.random(this.bool_sample_random_state);
             }
 
-            for(let i = this.n_num_features; i < dimensions[1] - 1; i++) {
-                let aux = random.random_int(this.original_sample_random_state, 0, this.n_categories_per_cat_feature);
+            for(let i = this.n_num_features; i < dimensions[1] - 1; i = i + this.n_categories_per_cat_feature) {
+                let aux = random.random_int(this.bool_sample_random_state, 0, this.n_categories_per_cat_feature);
                 for(let k = 0; k < this.n_categories_per_cat_feature; k++) {
                     if(aux == k) {
-                        data[j, k + i] = 1.0;
+                        data[j][k + i] = 1.0;
                     }
                     else {
-                        data[j, k + i] = 0.0;
+                        data[j][k + i] = 0.0;
                     }
                 }
             }
+
+            data[j][this.n_num_features + (this.n_cat_features * this.n_categories_per_cat_feature)] =
+               this.classify_instance(this.tree_root, data[j]);
+            
+            this.current_sample_x = [];
+            this.current_sample_y = [];
+
+            for(let k = 0; k < batch_size; k++) {
+                this.current_sample_x.push(data[k].slice(0, data[k].length - 1));
+                this.current_sample_y.push(data[k][data[k].length - 1]);
+            }
+            num_attributes = this.n_num_features + (this.n_cat_features * this.n_categories_per_cat_feature);
         }
-        // not finished jet
-        //return data;
+
+        return ([this.current_sample_x, this.current_sample_y]);
+    }
+
+    get_info() {
+        let info = 'RandomTreeGenerator:' 
+                    //+ '\n bool_tree_random_state: ' + this.bool_tree_random_state 
+                    //+ '\n bool_sample_random_state: ' + this.bool_sample_random_state 
+                    + '\n n_classes: ' + this.n_classes
+                    + '\n n_nominal_attributes: ' + this.n_cat_features
+                    + '\n n_numerical_attributes: ' + this.n_num_features
+                    + '\n n_values_per_nominal_attribute: ' + this.n_categories_per_cat_feature
+                    + '\n max_depth: ' + this.max_tree_depth 
+                    + '\n min_leaf_depth: ' + this.min_leaf_depth 
+                    + '\n fraction_leaves_per_level: ' + this.fraction_of_leaves_per_level;
+        return (info);
     }
 }
 
-
-class Node{
+class Node {
     /* 
      * Node
      * 
@@ -373,16 +400,11 @@ class Node{
      *     If given it means the node is an inner node and the split value is 
      *     split_att_value.
      */
-    constructor(){
-        this.class_label = null
-        this.split_att_index = null
-        this.split_att_value = null
-        this.children = []
+
+    constructor() {
+        this.class_label = null;
+        this.split_att_index = null;
+        this.split_att_value = null;
+        this.children = [];
     }
 }
-
-let tree = new RandomTreeGenerator()
-//console.log(tree.target_values)
-tree.generate_random_tree()
-
-console.log(tree.next_sample());
