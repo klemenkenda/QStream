@@ -1,6 +1,10 @@
 let Stream = require('./base_stream.js')
 let Utils = require('./utils.js')
 
+/**
+ * WaveformGenerator
+ * @extends Stream
+ */
 class WaveformGenerator extends Stream {
     /**
      * Generates instances with 21 numeric attributes and 3 classes, based
@@ -75,6 +79,7 @@ class WaveformGenerator extends Stream {
         
         //self.random_state = check_random_state(self._original_random_state)
         this.original_random_state = this.random_state == null ? false : true;
+        this.random = new Utils(this.random_state);
         this.sample_idx = 0
     }
 
@@ -99,7 +104,7 @@ class WaveformGenerator extends Stream {
          *     for the batch_size samples that were requested.
          */
 
-        let random = new Utils(this.random_state)
+        let random = this.random;
         let data = [];
         let dimensions = [batch_size, this.n_features + 1]
         for (let i = 0; i < dimensions[0]; ++i) {

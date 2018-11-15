@@ -1,4 +1,8 @@
 class Stream{
+    /**
+     * The abstract class setting up the minimum requirements of a stream,
+     * so that it can work along the other modules in the framework.
+     */
 
     constructor() {
         this.n_samples = 0;
@@ -18,7 +22,7 @@ class Stream{
     }
     
     prepare_for_use() {
-        /*
+        /**
          * Prepare the stream for use. Can be the reading of a file, or
          * the generation of a function, or anything necessary for the
          * stream to work after its initialization.
@@ -38,52 +42,49 @@ class Stream{
     }
 
     is_restartable() {
-        /*
+        /**
          * Determine if the stream is restartable.
-         * Returns
-         * -------
-         * Boolean
-         *    tTrue if stream is restartable.
+         * @return {boolean} - tTrue if stream is restartable.
          */
         return true;
     }
 
     restart() {
-        /*
+        /** 
          * Restart the stream.
          */
         this.prepare_for_use();
     }
 
     n_remaining_samples() {
-        /*
+        /** 
          * Returns the estimated number of remaining samples.
-         *
-         * Returns
-         * -------
-         * int
-         *   Remaining number of samples. -1 if infinite (e.g. generator)
+         * 
+         * @return {int} - Remaining number of samples. -1 if infinite (e.g. generator)
          */
         return (-1);
     }
 
     has_more_samples() {
-        /* Checks if stream has more samples.
+        /** Checks if stream has more samples.
          *
-         * Returns
-         * -------
-         * Boolean
-         *    true if stream has more samples.
+         * @return {boolean} - true if stream has more samples.
          */
         return (true);
     }
 
     get_data_info() {
+        /**
+         * @return {string} -Info
+         */
         let info = this.name + '\n' + this.n_targets + ' targets\n' + this.n_classes + ' classes\n' + this.n_features + ' features';
         return (info);
     }
 
     get_class_type() {
+        /**
+         * @return {string}
+         */
         return 'stream';
     }
 }

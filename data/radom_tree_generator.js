@@ -1,6 +1,10 @@
 let Stream = require('./base_stream.js')
 let Utils = require('./utils.js')
 
+/**
+ * RandomTreeGenerator
+ * @extends Stream
+ */
 class RandomTreeGenerator extends Stream {
     /**
      * This generator is built based on its description in Domingo and Hulten's 
@@ -36,9 +40,6 @@ class RandomTreeGenerator extends Stream {
         this.bool_tree_random_state = false;
         this.bool_sample_random_state = false;
 
-        this.random1 = new Utils(this.tree_random_state);
-        this.random2 = new Utils(this.sample_random_state);
- 
         this.n_classes = n_classes;
         this.n_targets = 1;
         this.n_num_features = n_num_features;
@@ -49,7 +50,6 @@ class RandomTreeGenerator extends Stream {
         this.min_leaf_depth = min_leaf_depth;
         this.fraction_of_leaves_per_level = fraction_leaves_per_level;
         this.tree_root = null;
-        this.sample_random_state = null;
         this.name = 'Random Tree Generator';
         this.configure();
     }
@@ -62,7 +62,7 @@ class RandomTreeGenerator extends Stream {
         }
         for (let i =0; i < this.n_cat_features; i++) {
             for (let j = 0; j < this.n_categories_per_cat_feature; j++) {
-                this.feature_names.push('att_nom' + i + '_val' + j);
+                this.feature_names.push('att_nom_' + i + '_val' + j);
             }
         }
         this.target_values = [];
@@ -77,6 +77,8 @@ class RandomTreeGenerator extends Stream {
          */
         this.bool_tree_random_state = this.tree_random_state == null ? false : true;
         this.bool_sample_random_state = this.sample_random_state == null ? false : true;
+        this.random1 = new Utils(this.tree_random_state);
+        this.random2 = new Utils(this.sample_random_state);
         this.sample_idx = 0;
         this.generate_random_tree();
     }
@@ -143,6 +145,7 @@ class RandomTreeGenerator extends Stream {
          */
 
         let random = this.random1;
+        //console.log(this.bool_sample_random_state)
         let node = new Node();
         if ((current_depth >= this.max_tree_depth) 
             || ((current_depth >= this.min_leaf_depth)  
@@ -152,7 +155,7 @@ class RandomTreeGenerator extends Stream {
             return leaf;
         }
         
-        let chosen_att = random.random_int(random_state, 0, nominal_att_candidates.length);
+        let chosen_att = random.random_int(this.bool_tree_random_state, 0, nominal_att_candidates.length);
         if(chosen_att < this.n_num_features) {
             let numeric_index = chosen_att;
             node.split_att_index = numeric_index;
@@ -349,3 +352,13 @@ class Node {
     }
 }
 module.exports = RandomTreeGenerator;
+
+let tree = new RandomTreeGenerator( 4242,  77677, 2,
+                                    2, 5, 5,
+                                    6, 3, 0.1)
+tree.prepare_for_use();
+//console.log(tree.target_values)
+//tree.generate_random_tree()
+
+console.log(tree.next_sample(), 'tu sem');
+//console.log(tree.get_info())
