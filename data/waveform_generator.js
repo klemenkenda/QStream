@@ -2,26 +2,23 @@ let Stream = require('./base_stream.js')
 let Utils = require('./utils.js')
 
 class WaveformGenerator extends Stream {
-    /* WaveformGenerator
-     *
+    /**
      * Generates instances with 21 numeric attributes and 3 classes, based
      * on a random differentiation of some base waveforms. Supports noise 
      * addition, but in this case the generator will have 40 attribute 
      * instances
      * 
-     * Parameters
-     * ----------
-     * has_noise: bool
-     *    if True additional 19 insignificant will be added. (Default: False) 
-     * random_state: int
+     * @param {boolean} has_noise - If True additional 19 insignificant will be added. (Default: False) 
+     * @param {int}  random_state - The seed for pseudo random generator (Default: null).
+     * 
      */
 
     constructor(has_noise = false, random_state = null) {
         super();
-        this.original_random_state = random_state == null ? false : true;
+        this.original_random_state = false;
         this.random_state = random_state;
         this.has_noise = has_noise;
-        this.n_featu = 21; // number of features when has_noise = false
+        this.n_featu = 21;
     	this.n_num_features = this.n_featu;
         this.n_classes = 3;
         this.n_targets = 1;
@@ -34,7 +31,7 @@ class WaveformGenerator extends Stream {
 
     configure() {
         if (this.has_noise) {
-            this.n_num_features = 40; // number of features when has_noise = true
+            this.n_num_features = 40;
         }
         this.n_features = this.n_num_features;
         this.feature_names =[];
@@ -51,10 +48,8 @@ class WaveformGenerator extends Stream {
     has_noise() {
         /** Retrieve the value of the option: add noise.
          *
-         * Returns
-         * -------
-         * Boolean
-         *   True if the noise is added.
+         * @return {boolean}  True if the noise is added.
+         * 
          */
         
         return (this.has_noise)
@@ -62,11 +57,9 @@ class WaveformGenerator extends Stream {
 
     set_has_noise(has_noise) {
         /** Set the value of the option: add noise.
-         *
-         * Parameters
-         * ----------
-         * has_noise: Boolean
-         *
+         * 
+         * @param {boolean} has_noise - The noise
+         * 
          */
         if (typeof(has_noise) === 'boolean') {
             this.has_noise = has_noise;
@@ -81,6 +74,7 @@ class WaveformGenerator extends Stream {
          */
         
         //self.random_state = check_random_state(self._original_random_state)
+        this.original_random_state = this.random_state == null ? false : true;
         this.sample_idx = 0
     }
 
@@ -100,15 +94,8 @@ class WaveformGenerator extends Stream {
          * Furthermore, if noise is added the features from 21 to 40 will be
          * replaced with a random normal value.
          * 
-         * Parameters
-         * ----------
-         * batch_size: int
-         *     The number of samples to return.
-         *     
-         * Returns
-         * -------
-         * tuple or tuple list
-         *     Return a tuple with the features matrix and the labels matrix 
+         * @param  {number} batch_size - The numbet of samples to return,
+         * @return {array} - Return an array with the features matrix and the labels matrix 
          *     for the batch_size samples that were requested.
          */
 

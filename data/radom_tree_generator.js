@@ -2,8 +2,7 @@ let Stream = require('./base_stream.js')
 let Utils = require('./utils.js')
 
 class RandomTreeGenerator extends Stream {
-    /* RandomTreeGenerator
-     *    
+    /**
      * This generator is built based on its description in Domingo and Hulten's 
      * 'Knowledge Discovery and Data Mining'. The generator is based on a random 
      * tree that splits features at random and sets labels to its leafs.
@@ -15,35 +14,17 @@ class RandomTreeGenerator extends Stream {
      * Since the concepts are generated and classified according to a tree 
      * structure, in theory, it should favour decision tree learners.
      * 
-     * Parameters
-     * ----------
-     * tree_random_state: int (Default: null)
-     *      Seed for random generation of tree.
+     * @param {int} tree_random_state - Seed for random generation of tree (Default: null).
+     * @param {int} sample_random_state - Seed for random generation of instances (Default: null).
+     * @param {int} n_classes - The number of classes to generate (Default: 2).
+     * @param {int} n_cat_features - The number of categorical features to generate. Categorical features are binary encoded, the actual number of
+     *      categorical features is 'n_cat_features'x'n_categories_per_cat_feature' (Default: 5)
+     * @param {int} n_num_features - The number of numerical features to generate (Default: 5).
+     * @param {int} n_categories_per_cat_feature - The number of values to generate per categorical feature (Default: 5).
+     * @param {int} max_tree_depth - The maximum depth of the tree concept (Default: 5).
+     * @param {int} min_leaf_depth - The first level of the tree above MaxTreeDepth that can have leaves (Default: 3).
+     * @param {float} fraction_leaves_per_level - The fraction of leaves per level from min_leaf_depth onwards (Default: 0.15).
      * 
-     * sample_random_state: int (Default: null)
-     *      Seed for random generation of instances.
-     * 
-     * n_classes: int (Default: 2)
-     *      The number of classes to generate.
-     * 
-     * n_cat_features: int (Default: 5)
-     *      The number of categorical features to generate. Categorical features are binary encoded, the actual number of
-     *      categorical features is `n_cat_features`x`n_categories_per_cat_feature`
-     * 
-     * n_num_features: int (Default: 5)
-     *      The number of numerical features to generate.
-     * 
-     * n_categories_per_cat_feature: int (Default: 5)
-     *      The number of values to generate per categorical feature.
-     * 
-     * max_tree_depth: int (Default: 5)
-     *      The maximum depth of the tree concept.
-     * 
-     * min_leaf_depth: int (Default: 3)
-     *      The first level of the tree above MaxTreeDepth that can have leaves.
-     * 
-     * fraction_leaves_per_level: float (Default: 0.15)
-     *      The fraction of leaves per level from min_leaf_depth onwards. 
      */
 
     constructor(tree_random_state = null, sample_random_state = null, n_classes = 2, n_cat_features = 5,
@@ -51,9 +32,9 @@ class RandomTreeGenerator extends Stream {
                 fraction_leaves_per_level = 0.15) {
         super()
         this.tree_random_state = tree_random_state;
-        this.bool_tree_random_state = tree_random_state == null ? false : true;
         this.sample_random_state = sample_random_state;
-        this.bool_sample_random_state = sample_random_state == null ? false : true;
+        this.bool_tree_random_state = false;
+        this.bool_sample_random_state = false;
 
         this.random1 = new Utils(this.tree_random_state);
         this.random2 = new Utils(this.sample_random_state);
@@ -91,6 +72,11 @@ class RandomTreeGenerator extends Stream {
     }
 
     prepare_for_use() {
+        /**
+         * Should be called before generating the samples.
+         */
+        this.bool_tree_random_state = this.tree_random_state == null ? false : true;
+        this.bool_sample_random_state = this.sample_random_state == null ? false : true;
         this.sample_idx = 0;
         this.generate_random_tree();
     }
@@ -122,7 +108,7 @@ class RandomTreeGenerator extends Stream {
     }
 
     generate_random_tree_node(current_depth, nominal_att_candidates, min_numeric_value, max_numeric_value, random_state) {
-        /* generate_random_tree_node
+        /** generate_random_tree_node
          *
          * Creates a node, choosing at random the splitting feature and the
          * split value. Fill the features with random feature values, and then 
@@ -139,30 +125,15 @@ class RandomTreeGenerator extends Stream {
          * Furthermore, if the current_depth is equal or higher than the tree 
          * maximum depth, a leaf node is immediately returned.
          * 
-         * Parameters
-         * ----------
-         * current_depth: int
-         *     The current tree depth.
-         * 
-         * nominal_att_candidates: array
-         *     A list containing all the, still not chosen for the split, 
-         *     nominal attributes.
-         * 
-         * min_numeric_value: array
-         *     The minimum value reachable, at this branch of the 
-         *     tree, for all numeric attributes.
-         * 
-         * max_numeric_value: array
-         *     The minimum value reachable, at this branch of the 
-         *     tree, for all numeric attributes.
-         *     
-         * random_state: numpy.random
-         *     A numpy random generator instance.
-         * 
-         * Returns
-         * -------
-         * random_tree_generator.Node
-         *     Returns the node, either a inner node or a leaf node.
+         * @param {int} current_depth - The current tree depth.
+         * @param {array} nominal_att_candidates - An array containing all the, 
+         *     still not chosen for the split, nominal attributes.
+         * @param {array} min_numeric_value - The minimum value reachable, 
+         *     at this branch of the tree, for all numeric attributes.
+         * @param {array} max_numeric_value - The maximum value reachable, 
+         *     at this branch of the tree, for all numeric attributes.
+         * @param {int} random_state - Seed for PRNG.
+         * @return {Node object} - Returns the node, either a inner node or a leaf node.
          * 
          * Notes
          * -----
@@ -225,27 +196,18 @@ class RandomTreeGenerator extends Stream {
     }
 
     classify_instance(node, att_values) {
-        /* classify_instance
-        * 
-        * After a sample is generated it passes through this function, which 
-        * advances the tree structure until it finds a leaf node.
-        * 
-        * Parameters
-        * ----------
-        * node: Node object
-        *     The Node that will be verified. Either it's a leaf, and then the 
-        *     label is returned, or it's a inner node, and so the algorithm 
-        *     will continue to advance in the structure.
-        *     
-        * att_values: numpy.array
-        *     The set of generated feature values of the sample.
-        * 
-        * Returns
-        * -------
-        * tuple or tuple list
-        *     Return a tuple with the features matrix and the labels matrix 
-        *     for the batch_size samples that were requested.
-        */
+        /** classify_instance
+         * 
+         * After a sample is generated it passes through this function, which 
+         * advances the tree structure until it finds a leaf node.
+         * 
+         * @param {Node object} node - The Node that will be verified. 
+         *     Either it's a leaf, and then the label is returned, 
+         *     or it's a inner node, and so the algorithm will continue
+         *     to advance in the structure.
+         * @param {array} att_values - The set of generated feature values of the sample.
+         * @return {int} - Returns leaf node class_label.
+         */
 
         if(node.children.length == 0) {
             return (node.class_label);
@@ -263,28 +225,19 @@ class RandomTreeGenerator extends Stream {
     }
 
     get_integer_nominal_attribute_representation(nominal_index = null, att_values = null) {
-        /* get_integer_nominal_attribute_representation
-        * 
-        * Utility function, to determine a nominal index when coded in one-hot 
-        * fashion.
-        * 
-        * The nominal_index uses as reference the number of nominal attributes 
-        * plus the number of numerical attributes. 
-        * 
-        * Parameters
-        * ----------
-        * nominal_index: int
-        *     The nominal feature index.
-        *     
-        * att_values: np.array
-        *     The features array.
-        *     
-        * Returns
-        * -------
-        * int
-        *     This function returns the index of the active variable in a nominal 
-        *     attribute 'hot one' representation. 
-        */
+        /** get_integer_nominal_attribute_representation
+         * 
+         * Utility function, to determine a nominal index when coded in one-hot 
+         * fashion.
+         * 
+         * The nominal_index uses as reference the number of nominal attributes 
+         * plus the number of numerical attributes. 
+         * @param {int} nominal_index - The nominal feature index.
+         * @param {array} att_values - The features array.
+         * @return {int} - This function returns the index of the active variable
+         *     in a nominal attribute 'hot one' representation. 
+         * 
+         */
 
         let min_index = this.n_num_features + (nominal_index - this.n_num_features) * this.n_categories_per_cat_feature
 
@@ -306,21 +259,15 @@ class RandomTreeGenerator extends Stream {
     }
 
     next_sample(batch_size = 1) {
-        /* next_sample
+        /** next_sample
          * 
          * Randomly generates attributes values, and then classify each instance 
          * generated.
          * 
-         * Parameters
-         * ----------
-         * batch_size: int
-         *     The number of samples to return.
-         *  
-         * Returns
-         * -------
-         * tuple or tuple list
-         *     Return a tuple with the features matrix and the labels matrix for the 
-         *     batch_size samples that were requested.
+         * @param {int} batch_size -The number of samples to return.
+         * @returns {array} - Return an array with the features matrix and the labels
+         *     matrix for the batch_size samples that were requested.
+         * 
          */
 
         let random = this.random2;
@@ -381,30 +328,24 @@ class RandomTreeGenerator extends Stream {
 }
 
 class Node {
-    /* 
+    /**
      * Node
      * 
      * Class that stores the attributes of a node. No further methods.
      * 
-     * Parameters
-     * ----------
-     * class_label: int, optional
-     *     If given it means the node is a leaf and the class label associated 
-     *     with it is class_label.
-     *     
-     * split_att_index: int, optional
-     *     If given it means the node is an inner node and the split attribute 
-     *     is split_att_index.
-     *     
-     * split_att_value: int, optional
-     *     If given it means the node is an inner node and the split value is 
-     *     split_att_value.
+     * @param {int} class_label - If given it means the node is a leaf 
+     *     and the class label associated with it is class_label (default: 0).
+     * @param {int} split_att_index - If given it means the node is an inner
+     *     node and the split attribute is split_att_index (default: 0).
+     * @param {int} split_att_value - If given it means the node is an inner
+     *     node and the split value is split_att_value.
      */
 
-    constructor() {
-        this.class_label = null;
-        this.split_att_index = null;
-        this.split_att_value = null;
+    constructor(class_label=null, split_att_index=null, split_att_value=null) {
+        this.class_label = class_label;
+        this.split_att_index = split_att_index;
+        this.split_att_value = split_att_value;
         this.children = [];
     }
 }
+module.exports = RandomTreeGenerator;
