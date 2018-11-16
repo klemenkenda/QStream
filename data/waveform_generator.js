@@ -121,12 +121,12 @@ class WaveformGenerator extends Stream {
             for (let i = 0; i <= this.n_featu - 1; i++) {
                 data[j][i] = multiplier_a * this.h_function[choice_a][i] 
                            + multiplier_b * this.h_function[choice_b][i] 
-                           + random.rand_gauss(this.original_random_state);
+                           + random.random_gauss(this.original_random_state);
             };
 
             if (this.has_noise) {
                 for (let i = this.n_featu; i < this.n_num_features; i++) {
-                    data[j][i] = random.rand_gauss(this.original_random_state);
+                    data[j][i] = random.random_gauss(this.original_random_state);
                 };
             };
 

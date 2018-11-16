@@ -44,7 +44,7 @@ class Utils {
         return (rand_int);
     }
 
-    rand_gauss(random_state = false) {
+    random_gauss(random_state = false) {
         /** 
          * Standard Gaussian distribution using Box-Muller transform.
          * 

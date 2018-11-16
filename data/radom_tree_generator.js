@@ -135,7 +135,7 @@ class RandomTreeGenerator extends Stream {
          * @param {array} max_numeric_value - The maximum value reachable, 
          *     at this branch of the tree, for all numeric attributes.
          * @param {int} random_state - Seed for PRNG.
-         * @return {Node object} - Returns the node, either a inner node or a leaf node.
+         * @return {node} - Returns the node, either a inner node or a leaf node.
          * 
          * Notes
          * -----
@@ -204,7 +204,7 @@ class RandomTreeGenerator extends Stream {
          * After a sample is generated it passes through this function, which 
          * advances the tree structure until it finds a leaf node.
          * 
-         * @param {Node object} node - The Node that will be verified. 
+         * @param {node} node - The Node that will be verified. 
          *     Either it's a leaf, and then the label is returned, 
          *     or it's a inner node, and so the algorithm will continue
          *     to advance in the structure.
