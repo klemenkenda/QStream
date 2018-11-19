@@ -1,4 +1,32 @@
-let Stream = require('./base_stream.js')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: data/radom_tree_generator.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: data/radom_tree_generator.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>let Stream = require('./base_stream.js')
 let Utils = require('./utils.js')
 
 /**
@@ -57,16 +85,16 @@ class RandomTreeGenerator extends Stream {
     configure() {
         this.target_names = ['class'];
         this.feature_names =[];
-        for (let i = 0; i < this.n_num_features; i++) {
+        for (let i = 0; i &lt; this.n_num_features; i++) {
             this.feature_names.push('att_num_' + i);
         }
-        for (let i =0; i < this.n_cat_features; i++) {
-            for (let j = 0; j < this.n_categories_per_cat_feature; j++) {
+        for (let i =0; i &lt; this.n_cat_features; i++) {
+            for (let j = 0; j &lt; this.n_categories_per_cat_feature; j++) {
                 this.feature_names.push('att_nom_' + i + '_val' + j);
             }
         }
         this.target_values = [];
-        for (let i = 0; i<this.n_classes; i++) {
+        for (let i = 0; i&lt;this.n_classes; i++) {
             this.target_values.push(i);
         }
     }
@@ -98,11 +126,11 @@ class RandomTreeGenerator extends Stream {
         let nominal_att_candidates = [];
         let min_numeric_value = [];
         let max_numeric_value = [];
-        for (let i = 0; i < this.n_num_features; i++) {
+        for (let i = 0; i &lt; this.n_num_features; i++) {
             min_numeric_value.push(0.0);
             max_numeric_value.push(1.0);
         }
-        for (let i = 0; i< this.n_num_features+this.n_cat_features; i++) {
+        for (let i = 0; i&lt; this.n_num_features+this.n_cat_features; i++) {
             nominal_att_candidates.push(i);
         }
         this.tree_root = this.generate_random_tree_node(0, nominal_att_candidates, min_numeric_value,
@@ -149,14 +177,14 @@ class RandomTreeGenerator extends Stream {
         let node = new Node();
         if ((current_depth >= this.max_tree_depth) 
             || ((current_depth >= this.min_leaf_depth)  
-            && (this.fraction_of_leaves_per_level >= (1.0 - random.random(this.bool_tree_random_state))))) {
+            &amp;&amp; (this.fraction_of_leaves_per_level >= (1.0 - random.random(this.bool_tree_random_state))))) {
             let leaf = new Node();
             leaf.class_label = Math.floor(random.random(this.bool_tree_random_state) * this.n_classes);
             return leaf;
         }
         
         let chosen_att = random.random_int(this.bool_tree_random_state, 0, nominal_att_candidates.length);
-        if(chosen_att < this.n_num_features) {
+        if(chosen_att &lt; this.n_num_features) {
             let numeric_index = chosen_att;
             node.split_att_index = numeric_index;
             let min_val = min_numeric_value[numeric_index];
@@ -182,12 +210,12 @@ class RandomTreeGenerator extends Stream {
         else {
             node.split_att_index = nominal_att_candidates[chosen_att];
             let new_nominal_candidates = [];
-            for(let i = 0; i < nominal_att_candidates.length; i++) {
+            for(let i = 0; i &lt; nominal_att_candidates.length; i++) {
                 if(nominal_att_candidates[i] != node.split_att_index) {
                     new_nominal_candidates.push(nominal_att_candidates[i]);
                 }
             }
-            for(let i =0;i < this.n_categories_per_cat_feature ; i++) {
+            for(let i =0;i &lt; this.n_categories_per_cat_feature ; i++) {
                 node.children.push(this.generate_random_tree_node(current_depth + 1,
                                                                     new_nominal_candidates,
                                                                     min_numeric_value, 
@@ -216,7 +244,7 @@ class RandomTreeGenerator extends Stream {
             return (node.class_label);
         }
 
-        if(node.split_att_index < this.n_num_features) {
+        if(node.split_att_index &lt; this.n_num_features) {
             let aux = att_values[node.split_att_index] ? 1 : 2;
             return (this.classify_instance(node.children[aux], att_values));
         }
@@ -244,7 +272,7 @@ class RandomTreeGenerator extends Stream {
 
         let min_index = this.n_num_features + (nominal_index - this.n_num_features) * this.n_categories_per_cat_feature
 
-        for(let i = 0; i < this.n_categories_per_cat_feature; i++) {
+        for(let i = 0; i &lt; this.n_categories_per_cat_feature; i++) {
             if (att_values[Math.floor(min_index)] == 1) {
                 return (i);
             }
@@ -278,18 +306,18 @@ class RandomTreeGenerator extends Stream {
         let data = [];
         let dimensions = [batch_size, this.n_num_features 
             + (this.n_cat_features * this.n_categories_per_cat_feature) + 1];
-        for(let i = 0; i < dimensions[0]; ++i) {
+        for(let i = 0; i &lt; dimensions[0]; ++i) {
             data.push(new Array(dimensions[1]).fill(0));
         };
 
-        for(let j = 0; j < batch_size; j++) {
-            for(let i = 0; i < this.n_num_features; i++) {
+        for(let j = 0; j &lt; batch_size; j++) {
+            for(let i = 0; i &lt; this.n_num_features; i++) {
                 data[j][i] = random.random(this.bool_sample_random_state);
             }
 
-            for(let i = this.n_num_features; i < dimensions[1] - 1; i = i + this.n_categories_per_cat_feature) {
+            for(let i = this.n_num_features; i &lt; dimensions[1] - 1; i = i + this.n_categories_per_cat_feature) {
                 let aux = random.random_int(this.bool_sample_random_state, 0, this.n_categories_per_cat_feature);
-                for(let k = 0; k < this.n_categories_per_cat_feature; k++) {
+                for(let k = 0; k &lt; this.n_categories_per_cat_feature; k++) {
                     if(aux == k) {
                         data[j][k + i] = 1.0;
                     }
@@ -305,7 +333,7 @@ class RandomTreeGenerator extends Stream {
             this.current_sample_x = [];
             this.current_sample_y = [];
 
-            for(let k = 0; k < batch_size; k++) {
+            for(let k = 0; k &lt; batch_size; k++) {
                 this.current_sample_x.push(data[k].slice(0, data[k].length - 1));
                 this.current_sample_y.push(data[k][data[k].length - 1]);
             }
@@ -361,4 +389,26 @@ tree.prepare_for_use();
 //tree.generate_random_tree()
 
 console.log(tree.next_sample(), 'tu sem');
-//console.log(tree.get_info())
+//console.log(tree.get_info())</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DDM.html">DDM</a></li><li><a href="Node.html">Node</a></li><li><a href="PageHinkley.html">PageHinkley</a></li><li><a href="RandomTreeGenerator.html">RandomTreeGenerator</a></li><li><a href="Stream.html">Stream</a></li><li><a href="StreamModel.html">StreamModel</a></li><li><a href="Utils.html">Utils</a></li><li><a href="WaveformGenerator.html">WaveformGenerator</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Nov 19 2018 10:45:30 GMT+0100 (Central Europe Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

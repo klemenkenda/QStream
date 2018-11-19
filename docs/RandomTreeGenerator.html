@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: RandomTreeGenerator</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: RandomTreeGenerator</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>RandomTreeGenerator<span class="signature">(tree_random_state, sample_random_state, n_classes, n_cat_features, n_num_features, n_categories_per_cat_feature, max_tree_depth, min_leaf_depth, fraction_leaves_per_level)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description">RandomTreeGenerator</div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="RandomTreeGenerator"><span class="type-signature"></span>new RandomTreeGenerator<span class="signature">(tree_random_state, sample_random_state, n_classes, n_cat_features, n_num_features, n_categories_per_cat_feature, max_tree_depth, min_leaf_depth, fraction_leaves_per_level)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    This generator is built based on its description in Domingo and Hulten's 'Knowledge Discovery and Data Mining'. The generator is based on a random tree that splits features at random and sets labels to its leafs.The tree structure is composed on Node objects, which can be either inner nodes or leaf nodes. The choice comes as a function fo the parameters passed to its initializer.Since the concepts are generated and classified according to a tree structure, in theory, it should favour decision tree learners.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tree_random_state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    null
+                
+                </td>
+            
+
+            <td class="description last">Seed for random generation of tree (Default: null).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sample_random_state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    null
+                
+                </td>
+            
+
+            <td class="description last">Seed for random generation of instances (Default: null).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>n_classes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    2
+                
+                </td>
+            
+
+            <td class="description last">The number of classes to generate (Default: 2).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>n_cat_features</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    5
+                
+                </td>
+            
+
+            <td class="description last">The number of categorical features to generate. Categorical features are binary encoded, the actual number of     categorical features is 'n_cat_features'x'n_categories_per_cat_feature' (Default: 5)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>n_num_features</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    5
+                
+                </td>
+            
+
+            <td class="description last">The number of numerical features to generate (Default: 5).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>n_categories_per_cat_feature</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    5
+                
+                </td>
+            
+
+            <td class="description last">The number of values to generate per categorical feature (Default: 5).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>max_tree_depth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    5
+                
+                </td>
+            
+
+            <td class="description last">The maximum depth of the tree concept (Default: 5).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>min_leaf_depth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    3
+                
+                </td>
+            
+
+            <td class="description last">The first level of the tree above MaxTreeDepth that can have leaves (Default: 3).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fraction_leaves_per_level</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    0.15
+                
+                </td>
+            
+
+            <td class="description last">The fraction of leaves per level from min_leaf_depth onwards (Default: 0.15).</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_radom_tree_generator.js.html">data/radom_tree_generator.js</a>, <a href="data_radom_tree_generator.js.html#line8">line 8</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="Stream.html">Stream</a></li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="bool_tree_random_state"><span class="type-signature"></span>bool_tree_random_state<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Should be called before generating the samples.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_radom_tree_generator.js.html">data/radom_tree_generator.js</a>, <a href="data_radom_tree_generator.js.html#line78">line 78</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DDM.html">DDM</a></li><li><a href="Node.html">Node</a></li><li><a href="PageHinkley.html">PageHinkley</a></li><li><a href="RandomTreeGenerator.html">RandomTreeGenerator</a></li><li><a href="Stream.html">Stream</a></li><li><a href="StreamModel.html">StreamModel</a></li><li><a href="Utils.html">Utils</a></li><li><a href="WaveformGenerator.html">WaveformGenerator</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Nov 19 2018 10:45:30 GMT+0100 (Central Europe Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
