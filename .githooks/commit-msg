@@ -13,7 +13,7 @@
 echo 'pre-commit'
 #! ./node_modules/.bin/jsdoc 
 # add maps directory with code that you want in documentation
-jsdoc .\\drift_detection\ .\\data\ .\\core\ -d ./docs
+jsdoc .\\drift_detection .\\data .\\core -d ./docs
 #!/bin/bash
 commit_msg=$(cat .\\.git\\COMMIT_EDITMSG)
 git add .
