@@ -352,13 +352,3 @@ class Node {
     }
 }
 module.exports = RandomTreeGenerator;
-
-let tree = new RandomTreeGenerator( 4242,  77677, 2,
-                                    2, 5, 5,
-                                    6, 3, 0.1)
-tree.prepare_for_use();
-//console.log(tree.target_values)
-//tree.generate_random_tree()
-
-console.log(tree.next_sample(), 'tu sem');
-//console.log(tree.get_info())

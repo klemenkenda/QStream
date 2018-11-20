@@ -290,14 +290,14 @@ describe('waweform_generator', function() {
             assert.ok(stream.is_restartable());
         });
 
-        it('feature sample should have lenght 15 and labels 1, labels should be 0 or 1', function() {
+        it('feature sample should have lenght 15 and labels should be 0 or 1', function() {
             next_sample = stream.next_sample();
             assert.equal(15, next_sample[0][0].length);
             assert.equal(1, next_sample[1].length);
             assert.ok(next_sample[1] == 0 || next_sample[1] == 1);
         });
 
-        it('all features of samples should have lenght 15 and labels 1, labels should be 0 or 1', function() {
+        it('all features of sample should have lenght 15 and labels should be 0 or 1', function() {
             next_sample = stream.next_sample(2);
             assert.equal(15, next_sample[0][0].length);
             assert.equal(15, next_sample[0][1].length);
