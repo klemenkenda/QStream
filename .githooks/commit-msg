@@ -1,0 +1,14 @@
+#!/bin/bash
+#coppy in /.git/hooks
+echo 'pre-commit'
+#! ./node_modules/.bin/jsdoc 
+# add maps dir with code that you want in documentation
+jsdoc /jsdoc .\\docs\\QMiner-streamAggregate.md .\\drift_detection\ .\\data\ .\\core\ -d ./docs
+#!/bin/bash
+commit_msg=$(cat .\\.git\\COMMIT_EDITMSG)
+git add .
+git commit --no-verify -am "$commit_msg"
+
+echo STATUS
+git status
+exit 1
