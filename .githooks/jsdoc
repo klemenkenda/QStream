@@ -1,1 +1,1 @@
-./node_modules/.bin/jsdoc .\docs\QMiner-streamAggregate.md .\drift_detection\ .\data\ .\core\ -d ./docs
+./node_modules/.bin/jsdoc .\drift_detection\ .\data\ .\core\ -d ./docs
