@@ -1,24 +1,24 @@
-const Utils =  require('../data/utils.js')
+const Utils =  require('../utils/utils.js')
 const assert = require('assert')
 
 describe('Utils', function(){
     describe('random()', function(){
         it('pseudo random should be in  interval [0,1)', function () {
-            let random = new Utils(12345);
+            let random = new Utils.Random(12345);
             for(let i = 0; i < 10000; i++){
                 let float = random.random(true);
                 assert.ok(float < 1 && float >= 0);
             }
         })
         it('random should be in  interval [0,1)', function () {
-            let random = new Utils();
+            let random = new Utils.Random();
             for(let i = 0; i < 1000; i++){
                 let float = random.random();
                 assert.ok(float < 1 && float >= 0);
             }
         });
         it('chi squared test for uniform distribution', function(){
-            let random = new Utils(12345);
+            let random = new Utils.Random(12345);
             let n = 1000;
             let k = 5;
             let ni = [];
@@ -44,7 +44,7 @@ describe('Utils', function(){
     });
     describe('random_int()', function(){
         it('number should be integer', function () {
-            let random = new Utils(54321);
+            let random = new Utils.Random(54321);
             for(let i = 0; i < 1000; i++){
                 let int = random.random_int(true,0,1000);
                 assert.ok(Math.floor(int) == int);
@@ -52,7 +52,7 @@ describe('Utils', function(){
         });
 
         it('chi squared test for uniform distribution', function(){
-            let random = new Utils(123123);
+            let random = new Utils.Random(123123);
             let n = 1000;
             let k = 5;
             let ni = [];
@@ -77,7 +77,7 @@ describe('Utils', function(){
     });
     describe('random_gauss()', function(){
         it('chi squared test for gaussian distribution', function(){
-            let random = new Utils(123456);
+            let random = new Utils.Random(123456);
             let n = 10000;
             let k = 6;
             let ni = [];

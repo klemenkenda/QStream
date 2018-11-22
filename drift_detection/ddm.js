@@ -15,7 +15,7 @@
 let BaseDriftDetector = require('./base_drift_detector.js');
 
 /**
- * PageHinkley
+ * Drift Detection Method class.
  * @extends BaseDriftDetector
  */
 class DDM extends BaseDriftDetector {

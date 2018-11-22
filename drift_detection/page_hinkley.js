@@ -13,7 +13,7 @@
 let BaseDriftDetector = require('./base_drift_detector.js');
 
 /**
- * PageHinkley
+ * Page-Hinkley drift detector.
  * @extends BaseDriftDetector
  */
 class PageHinkley extends BaseDriftDetector {
@@ -59,10 +59,11 @@ class PageHinkley extends BaseDriftDetector {
 
     /**
      * Add new element to the statistics.
-     * @param {numeric} x   The observed value, from which we want to detect the concept change.
      *
      * After calling this method, to verify if the change was detected, one should call the super method
      * detected_change, which returns True if concept drift has been detected and False otherwise.
+     *
+     * @param {numeric} x   The observed value, from which we want to detect the concept change.
      */
     add_element(x) {
         if (this.in_concept_change) this.reset();

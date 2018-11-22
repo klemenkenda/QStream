@@ -30,7 +30,7 @@
     
         <h2><span class="attribs"><span class="type-signature"></span></span>PageHinkley<span class="signature">(min_num_instances, delta, lambda, alpha)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">PageHinkley</div>
+            <div class="class-description">Page-Hinkley drift detector.</div>
         
     
 </header>
@@ -277,7 +277,7 @@
 
 
     <ul>
-        <li>BaseDriftDetector</li>
+        <li><a href="BaseDriftDetector.html">BaseDriftDetector</a></li>
     </ul>
 
 
@@ -312,7 +312,7 @@
 
 
 <div class="description">
-    Add new element to the statistics.
+    Add new element to the statistics.After calling this method, to verify if the change was detected, one should call the super methoddetected_change, which returns True if concept drift has been detected and False otherwise.
 </div>
 
 
@@ -364,7 +364,7 @@
 
             
 
-            <td class="description last">The observed value, from which we want to detect the concept change.After calling this method, to verify if the change was detected, one should call the super methoddetected_change, which returns True if concept drift has been detected and False otherwise.</td>
+            <td class="description last">The observed value, from which we want to detect the concept change.</td>
         </tr>
 
     
@@ -382,6 +382,102 @@
 
     
 
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="BaseDriftDetector.html#add_element">BaseDriftDetector#add_element</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="drift_detection_page_hinkley.js.html">drift_detection/page_hinkley.js</a>, <a href="drift_detection_page_hinkley.js.html#line68">line 68</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="detected_change"><span class="type-signature"></span>detected_change<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Function for reporting whether drift has been detected.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="BaseDriftDetector.html#detected_change">BaseDriftDetector#detected_change</a>
+    </li></ul></dd>
     
 
     
@@ -405,7 +501,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="drift_detection_page_hinkley.js.html">drift_detection/page_hinkley.js</a>, <a href="drift_detection_page_hinkley.js.html#line67">line 67</a>
+        <a href="drift_detection_base_drift_detector.js.html">drift_detection/base_drift_detector.js</a>, <a href="drift_detection_base_drift_detector.js.html#line33">line 33</a>
     </li></ul></dd>
     
 
@@ -428,6 +524,254 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Returns true if drift has been detected, otherwise false.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="detected_warning_zone"><span class="type-signature"></span>detected_warning_zone<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Function for reporting whether warning zone has been detected.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="BaseDriftDetector.html#detected_warning_zone">BaseDriftDetector#detected_warning_zone</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="drift_detection_base_drift_detector.js.html">drift_detection/base_drift_detector.js</a>, <a href="drift_detection_base_drift_detector.js.html#line42">line 42</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Returns true if warning zone has been detected, otherwise false.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="get_length_estimation"><span class="type-signature"></span>get_length_estimation<span class="signature">()</span><span class="type-signature"> &rarr; {int}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns length estimation.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="BaseDriftDetector.html#get_length_estimation">BaseDriftDetector#get_length_estimation</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="drift_detection_base_drift_detector.js.html">drift_detection/base_drift_detector.js</a>, <a href="drift_detection_base_drift_detector.js.html#line51">line 51</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Length estimation.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">int</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -470,6 +814,11 @@
 
     
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="BaseDriftDetector.html#reset">BaseDriftDetector#reset</a>
+    </li></ul></dd>
     
 
     
@@ -535,13 +884,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DDM.html">DDM</a></li><li><a href="Node.html">Node</a></li><li><a href="PageHinkley.html">PageHinkley</a></li><li><a href="RandomTreeGenerator.html">RandomTreeGenerator</a></li><li><a href="Stream.html">Stream</a></li><li><a href="StreamModel.html">StreamModel</a></li><li><a href="Utils.html">Utils</a></li><li><a href="WaveformGenerator.html">WaveformGenerator</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BaseDriftDetector.html">BaseDriftDetector</a></li><li><a href="DDM.html">DDM</a></li><li><a href="Node.html">Node</a></li><li><a href="PageHinkley.html">PageHinkley</a></li><li><a href="RandomTreeGenerator.html">RandomTreeGenerator</a></li><li><a href="Stream.html">Stream</a></li><li><a href="StreamModel.html">StreamModel</a></li><li><a href="WaveformGenerator.html">WaveformGenerator</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Nov 22 2018 12:11:57 GMT+0100 (Central Europe Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Nov 22 2018 12:52:53 GMT+0100 (Central Europe Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

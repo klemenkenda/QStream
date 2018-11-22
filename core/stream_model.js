@@ -9,6 +9,7 @@
  * Author: Klemen Kenda, klemen.kenda@ijs.si
  */
 
+/** Streaming model abstract class. */
 class StreamModel {
     /**
      * Interface (abstract class) for stream models. This class provides a template that

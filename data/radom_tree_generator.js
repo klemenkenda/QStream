@@ -1,5 +1,5 @@
 let Stream = require('./base_stream.js')
-let Utils = require('./utils.js')
+let Utils = require('../utils/utils.js')
 
 /**
  * RandomTreeGenerator
@@ -77,8 +77,8 @@ class RandomTreeGenerator extends Stream {
          */
         this.bool_tree_random_state = this.tree_random_state == null ? false : true;
         this.bool_sample_random_state = this.sample_random_state == null ? false : true;
-        this.random1 = new Utils(this.tree_random_state);
-        this.random2 = new Utils(this.sample_random_state);
+        this.random1 = new Utils.Random(this.tree_random_state);
+        this.random2 = new Utils.Random(this.sample_random_state);
         this.sample_idx = 0;
         this.generate_random_tree();
     }

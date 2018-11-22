@@ -1,7 +1,7 @@
 const generator =  require('../data/index.js')
 const assert = require('assert')
 
-describe('waweform_generator', function() {
+describe('waveform_generator', function() {
     describe('without noise', function() {
         let stream = new generator.WaveformGenerator();
         stream.prepare_for_use();
@@ -23,6 +23,7 @@ describe('waweform_generator', function() {
 
         it('expected targets should be [0, 1, 2]', function() {
             let expected_targets = [0, 1, 2];
+
             for(let i = 0; i < stream.n_classes; i++) {
                 assert.equal(expected_targets[i], stream.target_values[i]);
             }
@@ -50,10 +51,11 @@ describe('waweform_generator', function() {
 
         it('test if data info is correct', function() {
             let expected_info = 'Waveform Generator:'
-                                +'\n n_classes: 3'
-                                +'\n n_num_features: 21'
-                                +'\n n_cat_features: 0'
-                                +'\n has_noise: false'
+                                + '\n n_classes: 3'
+                                + '\n n_num_features: 21'
+                                + '\n n_cat_features: 0'
+                                + '\n has_noise: false';
+
             assert.equal(expected_info, stream.get_info());
         });
 
@@ -101,10 +103,12 @@ describe('waweform_generator', function() {
         it('last sample should be the same as next sample called before', function() {
             next_sample = stream.next_sample(2);
             last_sample = stream.last_sample();
+
             for(let i = 0; i < stream.n_features; i++) {
                 assert.equal(next_sample[0][0][i], last_sample[0][0][i]);
                 assert.equal(next_sample[0][1][i], last_sample[0][1][i]);
             }
+
             for(let i = 0; i < 2; i++) {
                 assert.equal(next_sample[1][i], last_sample[1][i]);
                 assert.equal(next_sample[1][i], last_sample[1][i]);
@@ -131,6 +135,7 @@ describe('waweform_generator', function() {
                                   'att_num_30', 'att_num_31', 'att_num_32', 'att_num_33', 'att_num_34',
                                   'att_num_35', 'att_num_36', 'att_num_37', 'att_num_38', 'att_num_39',
                                   ];
+
             for(let i = 0; i < stream.n_features; i++) {
                 assert.equal(expected_names[i], stream.feature_names[i]);
             }
@@ -138,6 +143,7 @@ describe('waweform_generator', function() {
 
         it('expected targets should be [0, 1, 2]', function() {
             let expected_targets = [0, 1, 2];
+
             for(let i = 0; i < stream.n_classes; i++) {
                 assert.equal(expected_targets[i], stream.target_values[i]);
             }
@@ -165,10 +171,10 @@ describe('waweform_generator', function() {
 
         it('test if data info is correct', function() {
             let expected_info = 'Waveform Generator:'
-                                +'\n n_classes: 3'
-                                +'\n n_num_features: 40'
-                                +'\n n_cat_features: 0'
-                                +'\n has_noise: true'
+                                + '\n n_classes: 3'
+                                + '\n n_num_features: 40'
+                                + '\n n_cat_features: 0'
+                                + '\n has_noise: true'
             assert.equal(expected_info, stream.get_info());
         });
 

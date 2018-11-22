@@ -1,4 +1,4 @@
-class Utils {
+class Random {
     /**
      * 
      * @param {int} seed - Seed for pseudo random generator.
@@ -58,4 +58,4 @@ class Utils {
         return (Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v));
     }
 }
-module.exports = Utils;
+module.exports = Random;

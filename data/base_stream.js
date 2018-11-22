@@ -1,9 +1,8 @@
-class Stream{
+/** Abstract class for a stream generator. */
+class Stream {
     /**
-     * The abstract class setting up the minimum requirements of a stream,
-     * so that it can work along the other modules in the framework.
+     * Create the stream generator and initialize the properties.
      */
-
     constructor() {
         this.n_samples = 0;
         this.n_targets = 0;
@@ -20,7 +19,7 @@ class Stream{
         this.target_values = null;
         this.name = null;
     }
-    
+
     prepare_for_use() {
         /**
          * Prepare the stream for use. Can be the reading of a file, or
@@ -35,7 +34,7 @@ class Stream{
     }
 
     last_sample() {
-        /** 
+        /**
          * Retrieves last `batch_size` samples in the stream.
          */
         return ([this.current_sample_x, this.current_sample_y]);
@@ -88,4 +87,5 @@ class Stream{
         return 'stream';
     }
 }
+
 module.exports = Stream;
