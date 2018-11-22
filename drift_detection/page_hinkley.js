@@ -12,6 +12,10 @@
 // includes
 let BaseDriftDetector = require('./base_drift_detector.js');
 
+/**
+ * PageHinkley
+ * @extends BaseDriftDetector
+ */
 class PageHinkley extends BaseDriftDetector {
     /**
      * Page Hinkley change detector (based on scikit-multiflow implementation, which is further based on

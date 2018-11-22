@@ -14,6 +14,10 @@
 // includes
 let BaseDriftDetector = require('./base_drift_detector.js');
 
+/**
+ * PageHinkley
+ * @extends BaseDriftDetector
+ */
 class DDM extends BaseDriftDetector {
     /**
      * Drift Detection Method (based on scikit-multiflow implementation)

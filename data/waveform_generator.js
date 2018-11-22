@@ -102,6 +102,9 @@ class WaveformGenerator extends Stream {
          * @param  {number} batch_size - The numbet of samples to return,
          * @return {array} - Return an array with the features matrix and the labels matrix 
          *     for the batch_size samples that were requested.
+         * 
+         * @example 
+         * 
          */
 
         let random = this.random;
