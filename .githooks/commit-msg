@@ -1,0 +1,21 @@
+#!/bin/bash
+# If Git version 2.9 or greater configure core.hooksPath
+# git config core.hooksPath .githooks
+#
+# or coppy that file in ...\QStream\.git\hooks
+#
+# this hook will automaticaly generate documentation using jsdoc,
+# when git commit is used
+#
+# if you do not want to bypass that hook use
+# git commit --no-verify -am "..."
+#
+echo 'pre-commit'
+#! ./node_modules/.bin/jsdoc 
+# add maps directory with code that you want in documentation
+jsdoc .\\drift_detection .\\data .\\core -d ./docs
+#!/bin/bash
+commit_msg=$(cat .\\.git\\COMMIT_EDITMSG)
+git add .
+git commit --no-verify -am "$commit_msg"
+exit 1
