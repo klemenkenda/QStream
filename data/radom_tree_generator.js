@@ -51,10 +51,10 @@ class RandomTreeGenerator extends Stream {
         this.fraction_of_leaves_per_level = fraction_leaves_per_level;
         this.tree_root = null;
         this.name = 'Random Tree Generator';
-        this.configure();
+        this._configure();
     }
 
-    configure() {
+    _configure() {
         this.target_names = ['class'];
         this.feature_names =[];
         for (let i = 0; i < this.n_num_features; i++) {
