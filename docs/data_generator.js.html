@@ -1,4 +1,32 @@
-let Stream = require('./base_stream.js')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: data/generator.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: data/generator.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>let Stream = require('./base_stream.js')
 let Utils = require('../utils/utils.js')
 class DataGenerator extends Stream {
     /** DataGenerator
@@ -31,7 +59,7 @@ class DataGenerator extends Stream {
         this.y = [];
         this.n_features = this.has_noise ? 16 : 11;
         this.feature_names = [];
-        for (let i = 1; i < this.n_features + 1; i++) {
+        for (let i = 1; i &lt; this.n_features + 1; i++) {
             this.feature_names.push('att_num_' + i);
         }
         this.feature_1_average_y = 10.0;
@@ -107,7 +135,7 @@ class DataGenerator extends Stream {
 
         let ENERGY = null;
 
-        for(let sample_n = 0; sample_n < this.n_samples  ; sample_n++){
+        for(let sample_n = 0; sample_n &lt; this.n_samples  ; sample_n++){
             // day , hour , delovni dan, num of people, temperature, humidity, wind, cloud cower, percipitation, snow
             sample = [];
             // temperature like feature
@@ -134,7 +162,7 @@ class DataGenerator extends Stream {
             // wind
             lala = Math.pow((feature_3 / 20), 3) * 2;
             feature_3 = feature_3 + (random.random(this.original_random_state)-0.5 - lala) * 3;
-            if(feature_3 < 0){
+            if(feature_3 &lt; 0){
                 feature_3 = 0;
             }
             else {
@@ -173,7 +201,7 @@ class DataGenerator extends Stream {
             if(feature_6_range > feature_6_range_max) {
                 feature_6_range = feature_6_range_max;
             }
-            if(feature_6_range < 0) {
+            if(feature_6_range &lt; 0) {
                 feature_6_range = 0;
             }
             
@@ -183,7 +211,7 @@ class DataGenerator extends Stream {
             if(feature_6 >= 1) {
                 feature_6 = 1;
             }
-            if(feature_6 <= 0) {
+            if(feature_6 &lt;= 0) {
                 feature_6 = 0;
             }
             feature_6 = Math.round(feature_6 * 100) / 100;
@@ -193,7 +221,7 @@ class DataGenerator extends Stream {
             if(hour == 0) {
                 coin = random.random(this.original_random_state);
             }
-            if(feature_6 >= feature_6_max && coin >= 0.5) {
+            if(feature_6 >= feature_6_max &amp;&amp; coin >= 0.5) {
                 feature_7 = (feature_6 - feature_6_max)/((1.0 - feature_6_max)) * Math.abs(random.random_gauss(this.original_random_state));
             }
             else {
@@ -203,7 +231,7 @@ class DataGenerator extends Stream {
             sample.push(feature_7);
             //end
             // snow
-            if(feature_7 != 0 && feature_1 < 0) {
+            if(feature_7 != 0 &amp;&amp; feature_1 &lt; 0) {
                 feature_8 = feature_7;
             }
             else {
@@ -212,7 +240,7 @@ class DataGenerator extends Stream {
             sample.push(feature_8);
             //end
             //season
-            if(((sample_n + Math.round((this.day * this.year) / 4)) % (this.day * this.year)) < (this.day * this.year) / 2 ) {
+            if(((sample_n + Math.round((this.day * this.year) / 4)) % (this.day * this.year)) &lt; (this.day * this.year) / 2 ) {
                 SEASON = 1;
             }
             else {
@@ -222,7 +250,7 @@ class DataGenerator extends Stream {
             //end
             // noise
             if(this.has_noise) {
-                for(let i = 0; i < NOISE_n; i++) {
+                for(let i = 0; i &lt; NOISE_n; i++) {
                     let noise = random.random_gauss(this.original_random_state);
                     noise = Math.round(noise * 100) / 100;
                     sample.push(noise);
@@ -243,7 +271,7 @@ class DataGenerator extends Stream {
                            + random.random_gauss(this.original_random_state) * 5;
 
             let some2 = 20;
-            for(let i = 0; i < this.day; i++){
+            for(let i = 0; i &lt; this.day; i++){
                 if(i >= features.length){
                     break;
                 }
@@ -295,10 +323,10 @@ class DataGenerator extends Stream {
                     + ENERGY_6 + ENERGY_7 + ENERGY_8;
 
             ENERGY = Math.round(ENERGY * 100) / 100;
-            if (ENERGY <= 0) {
+            if (ENERGY &lt;= 0) {
                 ENERGY = 0;
             }
-            if (SEASON == 0 && this.season) {
+            if (SEASON == 0 &amp;&amp; this.season) {
                 ENERGY = 0;
             }
             energy.push(ENERGY)
@@ -365,4 +393,26 @@ class DataGenerator extends Stream {
     }
 
 }
-module.exports = DataGenerator;
+module.exports = DataGenerator;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BaseDriftDetector.html">BaseDriftDetector</a></li><li><a href="DataGenerator.html">DataGenerator</a></li><li><a href="DDM.html">DDM</a></li><li><a href="Node.html">Node</a></li><li><a href="PageHinkley.html">PageHinkley</a></li><li><a href="RandomTreeGenerator.html">RandomTreeGenerator</a></li><li><a href="Stream.html">Stream</a></li><li><a href="StreamModel.html">StreamModel</a></li><li><a href="WaveformGenerator.html">WaveformGenerator</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Dec 05 2018 14:21:20 GMT+0100 (Central Europe Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

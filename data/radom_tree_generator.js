@@ -84,7 +84,7 @@ class RandomTreeGenerator extends Stream {
     }
 
     generate_random_tree() {
-        /* generate_random_tree
+        /** generate_random_tree
          *
          * Generates the random tree, starting from the root node and following 
          * the constraints passed as parameters to the initializer. 
