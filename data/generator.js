@@ -366,3 +366,5 @@ class DataGenerator extends Stream {
 
 }
 module.exports = DataGenerator;
+stream = new DataGenerator()
+console.log(stream.something === undefined)

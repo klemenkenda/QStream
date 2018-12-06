@@ -68,7 +68,7 @@ class WaveformGenerator extends Stream {
             this.has_noise = has_noise;
             this.configure();
         } else {
-            throw TypeError('has_noise should be boolean, \'' + typeof(has_noise) +  '\' was passed');
+            throw new TypeError('has_noise should be boolean, \'' + typeof(has_noise) +  '\' was passed');
         };
     }
 
