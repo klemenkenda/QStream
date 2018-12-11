@@ -1,11 +1,12 @@
+//script used in jupiter notebook to run generators.
 generator = require('../index.js')
 fs = require('fs')
 
 let num_of_samples = 3000;
 
-//let stream = new generator.WaveformGenerator();
-//let stream = new generator.RandomTreeGenerator();
-let stream = new generator.DataGenerator();
+let stream = new generator.Data.WaveformGenerator();
+//let stream = new generator.Data.RandomTreeGenerator();
+//let stream = new generator.Data.DataGenerator();
 
 stream.prepare_for_use();
 stream.next_sample(num_of_samples);
