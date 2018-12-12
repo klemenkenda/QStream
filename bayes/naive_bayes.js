@@ -1,10 +1,19 @@
 StreamModel = require('../core/stream_model.js')
-utils = require('./utils.js')
+utils = require('../utils/utils.js')
 
 class BaseNB {
+    /**
+     * Abstract base class for naive Bayes estimators.
+     */
     constructor() {
     }
     predict(X) {
+        /**
+         * Perform classification on an array of test vectors X.
+         * 
+         * @param {array} X
+         * @returns Predicted target values for X.
+         */
         let jll = this._joint_log_likelihood(X);
         let cla = [];
         for(let i = 0; i < jll.length; i++) {
@@ -14,22 +23,27 @@ class BaseNB {
                     break;
                 }
             }
-            //cla.push(this.classes_[Math.max(...jll)]);
         }
         return (cla);
     }
 
     predict_log_proba(X) {
+        /**
+         * Return log-probability estimates for the test vector X.
+         * @param {array} X
+         * @returns Returns the log-probability of the samples for each class in
+         *          the model. The columns correspond to the classes in sorted
+         *          order, as they appear in the attribute `classes_`.
+         */
         let jll = this._joint_log_likelihood(X);
         let log_prob_x = [];
 
         for(let i = 0; i < jll.length; i++) {
-            log_prob_x.push(utils.logsumexp(jll[i]));
+            log_prob_x.push(utils.BayesUtils.logsumexp(jll[i]));
         }
         let log_prob = []
         for(let i = 0; i < log_prob_x.length; i++) {
             log_prob = jll[i].map(function(num) {
-                console.log(num - log_prob_x[i])
                 return (num - log_prob_x[i]);
             })
         }
@@ -37,6 +51,13 @@ class BaseNB {
     }
 
     predict_proba(X) {
+        /**
+         * Return probability estimates for the test vector X.
+         * @param {array} X
+         * @returns Returns the probability of the samples for each class in
+         *          the model. The columns correspond to the classes in sorted
+         *          order, as they appear in the attribute `classes_`.
+         */
         let log_prob = this.predict_log_proba(X);
         let prob = []
 
@@ -44,12 +65,14 @@ class BaseNB {
             prob.push(Math.exp(log_prob[i]));
         }
 
-        return prob;
+        return (prob);
     }
 }
 
 class BaseDiscreteNB extends (BaseNB) {
-
+    /**
+     * Abstract base class for naive Bayes on discrete/categorical data.
+     */
     constructor() {
         super();
     }
@@ -64,8 +87,8 @@ class BaseDiscreteNB extends (BaseNB) {
         }
         else if(this.fit_prior) {
             this.class_log_prior_ = [];
-            for(let i = 0; i < this.class_count_.length; i++){
-                let class_log_ = Math.log(this.class_count_[i]) - Math.log(utils.sum(this.class_count_));
+            for(let i = 0; i < this.class_count_.length; i++) {
+                let class_log_ = Math.log(this.class_count_[i]) - Math.log(utils.BayesUtils.sum(this.class_count_));
                 this.class_log_prior_.push(class_log_);
             }
         }
@@ -84,19 +107,48 @@ class BaseDiscreteNB extends (BaseNB) {
         }
         if(Math.min(this.alpha) < _ALPHA_MIN) {
             //warning
-            console.log("alpha too small will result in numeric errors, setting alpha =" + _ALPHA_MIN);
+            //console.log("alpha too small will result in numeric errors, setting alpha =" + _ALPHA_MIN);
             this.alpha = this.alpha.map(function(x) {
-                return Math.max(...[x, _ALPHA_MIN]);
+                return (Math.max(...[x, _ALPHA_MIN]));
             });
         }
-        return this.alpha;
+        return (this.alpha);
     }
 
     partial_fit(X, y, classes = null, sample_weight = null) {
+        /**Incremental fit on a batch of samples.
+         * This method is expected to be called several times consecutively
+         * on different chunks of a dataset so as to implement out-of-core
+         * or online learning.
+         * This is especially useful when the whole dataset is too big to fit in
+         * memory at once.
+         * This method has some performance overhead hence it is better to call
+         * partial_fit on chunks of data that are as large as possible
+         * (as long as fitting in the memory budget) to hide the overhead.
+         * 
+         * Incremental fit on a batch of samples.
+         * This method is expected to be called several times consecutively
+         * on different chunks of a dataset so as to implement out-of-core
+         * or online learning.
+         * This is especially useful when the whole dataset is too big to fit in
+         * memory at once.
+         * This method has some performance overhead hence it is better to call
+         * partial_fit on chunks of data that are as large as possible
+         * (as long as fitting in the memory budget) to hide the overhead.
+         * 
+         * @param {array} X Training vectors.
+         * @param {array} y Target values.
+         * @param {array} classes List of all the classes that can possibly appear in the y vector.
+         *                        Must be provided at the first call to partial_fit, can be omitted
+         *                        in subsequent calls.
+         * @param {array} sample_weight Weights applied to individual samples (1. for unweighted).
+         * 
+         * @returns {this : object}
+         */
         //TODO X = check_arry(X)
         let n_features = X[0].length;
 
-        if (utils._check_partial_fit_first_call(this, classes)) {
+        if (utils.BayesUtils._check_partial_fit_first_call(this, classes)) {
             let n_effective_classes = classes.length ? classes.length : 2;
             this.class_count_ = new Array(n_effective_classes).fill(0);
 
@@ -111,7 +163,7 @@ class BaseDiscreteNB extends (BaseNB) {
             let msg = 'Number of features ' + n_features + ' does not match previous data' + this.coef_.shape[1] +'.';
             throw new Error(msg);
         } */
-        let Y = utils.label_binarize(y, this.classes_);
+        let Y = utils.BayesUtils.label_binarize(y, this.classes_);
 
         if(X.length != Y.length) {
             throw new Error('Shape of X: ' + X.length + ' and y: ' + Y.length + ' are incompatible.');
@@ -119,7 +171,7 @@ class BaseDiscreteNB extends (BaseNB) {
 
         if(sample_weight != null) {
             for(let i = 0; y < sample_weight.length; i++) {
-                Y[i] = Y[i].map(function(x) { return x * sample_weight[i]; });
+                Y[i] = Y[i].map(function(x) { return (x * sample_weight[i]); });
             }
         }
 
@@ -132,15 +184,25 @@ class BaseDiscreteNB extends (BaseNB) {
     }
 
     fit(X, y, sample_weight = null) {
+        /**
+         * Fit Naive Bayes classifier according to X, y.
+         * 
+         * @param {array} X Training vectors.
+         * @param {array} y Target values.
+         * @param {array} sample_weight Weights applied to individual samples (1. for unweighted).
+         * 
+         * @returns {this : object}
+         * 
+         */
         //TODO X, y = check_X_y(X, y, 'csr')
         let n_features = X[0].length;
 
-        let Y = utils.label_binarize(y, utils.unique_labels(y));
-        this.classes_ = utils.unique_labels(y);
+        let Y = utils.BayesUtils.label_binarize(y, utils.BayesUtils.unique_labels(y));
+        this.classes_ = utils.BayesUtils.unique_labels(y);
 
         if(sample_weight != null) {
             for(let i = 0; y < sample_weight.length; i++) {
-                Y[i] = Y[i].map(function(x) { return x * sample_weight[i]; });
+                Y[i] = Y[i].map(function(x) { return (x * sample_weight[i]); });
             }
         }
 
@@ -159,7 +221,7 @@ class BaseDiscreteNB extends (BaseNB) {
         let alpha = this._check_alpha();
         this._update_feature_log_prob(alpha);
         this._update_class_log_prior(class_prior);
-        return this;
+        return (this);
     }
 
 /*     _get_coef() {
@@ -174,6 +236,21 @@ class BaseDiscreteNB extends (BaseNB) {
 }
 
 class MultinomialNB extends (BaseDiscreteNB) {
+    /**
+     * Naive Bayes classifier for multinomial models
+     * The multinomial Naive Bayes classifier is suitable for classification with
+     * discrete features (e.g., word counts for text classification). The
+     * multinomial distribution normally requires integer feature counts. However,
+     * in practice, fractional counts such as tf-idf may also work.
+     *
+     * @param {float} alpha Additive (Laplace/Lidstone) smoothing parameter
+     *                      (0 for no smoothing).
+     * @param {boolean} fit_prior boolean, optional (default=True)
+     *                            Whether to learn class prior probabilities or not.
+     *                            If false, a uniform prior will be used.
+     * @param {array} class_prior Prior probabilities of the classes. If specified the priors are not
+     *                            adjusted according to the data.
+     */
     constructor(alpha = 1.0, fit_prior = true, class_prior = null) {
         super();
         this.alpha = alpha;
@@ -191,7 +268,7 @@ class MultinomialNB extends (BaseDiscreteNB) {
 
         for(let i = 0; i < this.feature_count_.length; i++) {
             for(let j = 0; j < this.feature_count_[0].length; j++) {
-                this.feature_count_[i][j] = this.feature_count_[i][j] + utils.dot(utils.transpose(Y), X)[i][j];
+                this.feature_count_[i][j] = this.feature_count_[i][j] + utils.BayesUtils.dot(utils.BayesUtils.transpose(Y), X)[i][j];
             }
         }
 
@@ -203,6 +280,9 @@ class MultinomialNB extends (BaseDiscreteNB) {
     }
 
     _update_feature_log_prob(alpha) {
+        /*
+         * Apply smoothing to raw counts and recompute log probabilities
+         */
         let smoothed_fc = this.feature_count_.map(function(arr) {
             return arr.map(function(num) {
                 return (num + alpha);
@@ -216,13 +296,16 @@ class MultinomialNB extends (BaseDiscreteNB) {
 
         for(let i = 0; i < smoothed_fc.length; i++) {
             this.feature_log_prob_.push(smoothed_fc[i].map(function(num) {
-                return Math.log(num) - Math.log(smoothed_cc[i]);
+                return (Math.log(num) - Math.log(smoothed_cc[i]));
             }))
         }
     }
 
     _joint_log_likelihood(X) {
-        let prod = utils.dot(X, utils.transpose(this.feature_log_prob_))
+        /*
+         * Calculate the posterior log probability of the samples X.
+         */
+        let prod = utils.BayesUtils.dot(X, utils.BayesUtils.transpose(this.feature_log_prob_))
         let ret = [];
 
         let dimensions = [prod.length, prod[0].length];
@@ -239,56 +322,3 @@ class MultinomialNB extends (BaseDiscreteNB) {
     }
 }
 module.exports = MultinomialNB;
-
-
-//TESTS
-let X = [[2, 1, 0, 4, 2, 1, 1, 1, 1, 3, 1, 1, 2, 4, 1, 1, 1, 4, 2, 2, 3, 4,
-    4, 1, 2, 0, 0, 1, 2, 4, 0, 2, 3, 4, 3, 3, 4, 1, 1, 3, 3, 4, 2, 2,
-    4, 2, 3, 1, 1, 3, 2, 1, 4, 3, 0, 1, 2, 2, 1, 3, 4, 3, 1, 1, 0, 2,
-    3, 1, 4, 3, 1, 2, 0, 0, 1, 2, 4, 2, 4, 3, 0, 3, 3, 1, 2, 2, 3, 2,
-    3, 3, 1, 2, 4, 4, 4, 2, 1, 1, 0, 4],
-   [4, 2, 3, 3, 2, 3, 0, 2, 0, 1, 1, 4, 4, 2, 2, 0, 3, 1, 3, 2, 3, 2,
-    2, 2, 3, 0, 4, 4, 2, 4, 0, 3, 1, 1, 3, 3, 0, 2, 0, 0, 0, 1, 3, 0,
-    3, 0, 0, 4, 3, 1, 1, 4, 4, 1, 1, 3, 2, 3, 3, 0, 2, 2, 4, 2, 4, 2,
-    4, 2, 3, 3, 4, 0, 2, 1, 3, 2, 4, 1, 1, 2, 3, 2, 2, 3, 1, 2, 3, 0,
-    3, 2, 4, 2, 4, 3, 4, 1, 1, 3, 4, 1],
-   [1, 3, 3, 2, 0, 0, 1, 3, 3, 4, 4, 0, 0, 2, 3, 0, 2, 2, 2, 4, 0, 2,
-    4, 4, 3, 2, 2, 4, 4, 1, 4, 3, 0, 0, 3, 4, 1, 0, 0, 1, 1, 4, 4, 0,
-    3, 0, 2, 4, 1, 4, 3, 4, 3, 4, 2, 4, 4, 0, 0, 3, 1, 1, 4, 3, 3, 2,
-    1, 3, 3, 2, 1, 1, 0, 1, 4, 4, 2, 1, 3, 0, 4, 1, 0, 2, 2, 4, 0, 2,
-    3, 1, 1, 4, 1, 2, 2, 2, 0, 4, 4, 4],
-   [1, 0, 0, 2, 2, 3, 4, 0, 4, 1, 3, 0, 0, 4, 0, 3, 1, 2, 1, 2, 3, 3,
-    1, 4, 4, 4, 2, 3, 4, 2, 4, 2, 4, 1, 3, 0, 4, 1, 3, 3, 2, 1, 1, 4,
-    2, 3, 1, 2, 0, 3, 1, 0, 3, 0, 3, 2, 0, 0, 3, 2, 2, 1, 0, 2, 1, 3,
-    0, 0, 4, 0, 3, 2, 4, 4, 2, 0, 4, 2, 3, 1, 2, 4, 4, 1, 4, 2, 2, 3,
-    0, 0, 4, 2, 0, 0, 0, 2, 4, 3, 3, 4],
-   [2, 1, 4, 3, 1, 3, 1, 2, 3, 2, 4, 1, 1, 4, 4, 2, 1, 3, 4, 1, 1, 2,
-    0, 1, 4, 4, 1, 0, 0, 1, 3, 2, 2, 1, 4, 1, 3, 4, 3, 2, 3, 4, 0, 0,
-    1, 2, 0, 2, 0, 4, 1, 4, 1, 1, 3, 3, 2, 1, 1, 1, 2, 0, 1, 4, 1, 3,
-    1, 0, 4, 4, 2, 0, 0, 3, 1, 3, 3, 1, 1, 3, 4, 0, 0, 3, 4, 3, 4, 3,
-    1, 4, 1, 3, 4, 0, 4, 4, 1, 3, 4, 3],
-   [0, 1, 2, 2, 2, 1, 0, 1, 2, 0, 3, 2, 4, 2, 1, 3, 1, 4, 3, 4, 2, 0,
-    3, 4, 4, 2, 2, 3, 1, 3, 1, 3, 1, 4, 1, 1, 2, 3, 2, 0, 2, 2, 1, 3,
-    3, 2, 3, 2, 1, 3, 4, 2, 4, 4, 3, 4, 0, 0, 1, 4, 2, 1, 4, 1, 1, 1,
-    1, 0, 3, 1, 2, 4, 1, 1, 2, 2, 0, 3, 3, 0, 1, 1, 4, 1, 1, 0, 1, 3,
-    3, 0, 0, 3, 2, 1, 0, 2, 1, 3, 4, 2]];
-
-let y = [1, 2, 3, 4, 5, 6];
-
-/* let bay = new MultinomialNB()
-bay.fit(X,y)
-
-console.log(bay.predict([X[2], X[3] , X[4]] ) ) */
-
-let y1 = [1,2,3,4,5,6];
-
-let bay2 = new MultinomialNB() 
-for(let i = 0; i < y.length ;i++) {
-    let X_ = [X[i]];
-    let y_ = [y[i]];
-
-    bay2.partial_fit(X_, y_, classes = y1, sample_weight = null);
-}
-
-console.log(bay2.predict([X[2], X[1]] ) )
-console.log(bay2.predict_proba([X[2]] ) )
