@@ -152,7 +152,7 @@ class RandomTreeGenerator extends Stream {
             && (this.fraction_of_leaves_per_level >= (1.0 - random.random(this.bool_tree_random_state))))) {
             let leaf = new Node();
             leaf.class_label = Math.floor(random.random(this.bool_tree_random_state) * this.n_classes);
-            return leaf;
+            return (leaf);
         }
         
         let chosen_att = random.random_int(this.bool_tree_random_state, 0, nominal_att_candidates.length);

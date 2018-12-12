@@ -13,7 +13,7 @@ class DataGenerator extends Stream {
      * 
      */
 
-    constructor(n_samples = 30000, has_noise = false, random_state = null, year = 365, day = 6, season = true){
+    constructor(n_samples = 30000, has_noise = false, random_state = null, year = 365, day = 6, season = true) {
         super();
         this.n_samples = n_samples;
         this.has_noise = has_noise;
@@ -23,7 +23,7 @@ class DataGenerator extends Stream {
         this.year = year;
         this.day = day;
         this.season = season;
-        this._configure()
+        this._configure();
     }
 
     _configure() {
@@ -107,16 +107,15 @@ class DataGenerator extends Stream {
 
         let ENERGY = null;
 
-        for(let sample_n = 0; sample_n < this.n_samples  ; sample_n++){
+        for(let sample_n = 0; sample_n < this.n_samples  ; sample_n++) {
             // day , hour , delovni dan, num of people, temperature, humidity, wind, cloud cower, percipitation, snow
             sample = [];
             // temperature like feature
             let hour = sample_n % this.day
-            if(hour == 0){
+            if(hour == 0) {
                 feature_1_d = this.plus_minus_y * Math.sin(2 / (this.year * this.day) * Math.PI * (sample_n + this.day / 2) 
                     - Math.PI / 2) + this.feature_1_average_y + (random.random(this.original_random_state) * 10 - 5);
             }
-
             let feature_1_h = 0
             let dayly_random = random.random(this.original_random_state) + 0.5;
             feature_1_h = this.plus_minus_d * dayly_random * Math.sin(2 / this.day * Math.PI * hour - Math.PI / 2)
@@ -134,7 +133,7 @@ class DataGenerator extends Stream {
             // wind
             lala = Math.pow((feature_3 / 20), 3) * 2;
             feature_3 = feature_3 + (random.random(this.original_random_state)-0.5 - lala) * 3;
-            if(feature_3 < 0){
+            if(feature_3 < 0) {
                 feature_3 = 0;
             }
             else {
@@ -243,14 +242,14 @@ class DataGenerator extends Stream {
                            + random.random_gauss(this.original_random_state) * 5;
 
             let some2 = 20;
-            for(let i = 0; i < this.day; i++){
-                if(i >= features.length){
+            for(let i = 0; i < this.day; i++) {
+                if(i >= features.length) {
                     break;
                 }
-                if(feature_1_min == null){
+                if(feature_1_min == null) {
                     feature_1_min = features[features.length - i - 1][2];
                 }
-                else if(feature_1_min > features[features.length - i - 1][2]){
+                else if(feature_1_min > features[features.length - i - 1][2]) {
                     feature_1_min = features[features.length - i - 1][2];
                 }
             }
@@ -274,7 +273,7 @@ class DataGenerator extends Stream {
                          + random.random_gauss(this.original_random_state) * 2;
 
             let ENERGY_4 = 0;
-            if(feature_4 == 0){
+            if(feature_4 == 0) {
                 ENERGY_4 = - 200 + random.random_gauss(this.original_random_state) * 4;
             }
             else {
@@ -307,9 +306,6 @@ class DataGenerator extends Stream {
             
             features.push(sample);
         }
-
-        //return features;
-        //return energy;
         return ([features, energy])
     }
 
@@ -363,7 +359,6 @@ class DataGenerator extends Stream {
 
         return (info);
     }
-
 }
 module.exports = DataGenerator;
 stream = new DataGenerator()
