@@ -1,5 +1,5 @@
 let Stream = require('./base_stream.js')
-let Utils = require('../utils/utils.js')
+let Utils = require('../utils/index.js')
 
 /**
  * RandomTreeGenerator
@@ -52,48 +52,47 @@ class RandomTreeGenerator extends Stream {
         this.tree_root = null;
         this.name = 'Random Tree Generator';
         this._configure();
-    }
+    };
 
     _configure() {
         this.target_names = ['class'];
         this.feature_names =[];
         for (let i = 0; i < this.n_num_features; i++) {
             this.feature_names.push('att_num_' + i);
-        }
+        };
         for (let i =0; i < this.n_cat_features; i++) {
             for (let j = 0; j < this.n_categories_per_cat_feature; j++) {
                 this.feature_names.push('att_nom_' + i + '_val' + j);
-            }
-        }
+            };
+        };
         this.target_values = [];
         for (let i = 0; i<this.n_classes; i++) {
             this.target_values.push(i);
-        }
-    }
+        };
+    };
 
+    /**
+     * Should be called before generating the samples.
+     */
     prepare_for_use() {
-        /**
-         * Should be called before generating the samples.
-         */
         this.bool_tree_random_state = this.tree_random_state == null ? false : true;
         this.bool_sample_random_state = this.sample_random_state == null ? false : true;
         this.random1 = new Utils.Random(this.tree_random_state);
         this.random2 = new Utils.Random(this.sample_random_state);
         this.sample_idx = 0;
         this.generate_random_tree();
-    }
-
+    };
+       
+    /** generate_random_tree
+     *
+     * Generates the random tree, starting from the root node and following 
+     * the constraints passed as parameters to the initializer. 
+     *
+     * The tree is recursively generated, node by node, until it reaches the
+     * maximum tree depth.
+     * 
+     */
     generate_random_tree() {
-        /** generate_random_tree
-         *
-         * Generates the random tree, starting from the root node and following 
-         * the constraints passed as parameters to the initializer. 
-         *
-         * The tree is recursively generated, node by node, until it reaches the
-         * maximum tree depth.
-         * 
-         */
-
         let tree_random_state = this.tree_random_state;
         let nominal_att_candidates = [];
         let min_numeric_value = [];
@@ -101,49 +100,48 @@ class RandomTreeGenerator extends Stream {
         for (let i = 0; i < this.n_num_features; i++) {
             min_numeric_value.push(0.0);
             max_numeric_value.push(1.0);
-        }
+        };
         for (let i = 0; i< this.n_num_features+this.n_cat_features; i++) {
             nominal_att_candidates.push(i);
-        }
+        };
         this.tree_root = this.generate_random_tree_node(0, nominal_att_candidates, min_numeric_value,
             max_numeric_value, tree_random_state);
-    }
+    };
 
+    /** generate_random_tree_node
+     *
+     * Creates a node, choosing at random the splitting feature and the
+     * split value. Fill the features with random feature values, and then 
+     * recursively generates its children. If the split feature is a
+     * numerical feature there are going to be two children nodes, one
+     * for samples where the value for the split feature is smaller than
+     * the split value, and one for the other case.
+     * 
+     * Once the recursion passes the leaf minimum depth, it probabilistic 
+     * chooses if the node is a leaf or not. If not, the recursion follow 
+     * the same way as before. If it decides the node is a leaf, a class 
+     * label is chosen for the leaf at random.
+     * 
+     * Furthermore, if the current_depth is equal or higher than the tree 
+     * maximum depth, a leaf node is immediately returned.
+     * 
+     * @param {int} current_depth - The current tree depth.
+     * @param {array} nominal_att_candidates - An array containing all the, 
+     *     still not chosen for the split, nominal attributes.
+     * @param {array} min_numeric_value - The minimum value reachable, 
+     *     at this branch of the tree, for all numeric attributes.
+     * @param {array} max_numeric_value - The maximum value reachable, 
+     *     at this branch of the tree, for all numeric attributes.
+     * @param {int} random_state - Seed for PRNG.
+     * @return {node} - Returns the node, either a inner node or a leaf node.
+     * 
+     * Notes
+     * -----
+     * If the splitting attribute of a node happens to be a nominal attribute 
+     * we guarantee that none of its children will split on the same attribute, 
+     * as it would have no use for that split. 
+     */
     generate_random_tree_node(current_depth, nominal_att_candidates, min_numeric_value, max_numeric_value, random_state) {
-        /** generate_random_tree_node
-         *
-         * Creates a node, choosing at random the splitting feature and the
-         * split value. Fill the features with random feature values, and then 
-         * recursively generates its children. If the split feature is a
-         * numerical feature there are going to be two children nodes, one
-         * for samples where the value for the split feature is smaller than
-         * the split value, and one for the other case.
-         * 
-         * Once the recursion passes the leaf minimum depth, it probabilistic 
-         * chooses if the node is a leaf or not. If not, the recursion follow 
-         * the same way as before. If it decides the node is a leaf, a class 
-         * label is chosen for the leaf at random.
-         * 
-         * Furthermore, if the current_depth is equal or higher than the tree 
-         * maximum depth, a leaf node is immediately returned.
-         * 
-         * @param {int} current_depth - The current tree depth.
-         * @param {array} nominal_att_candidates - An array containing all the, 
-         *     still not chosen for the split, nominal attributes.
-         * @param {array} min_numeric_value - The minimum value reachable, 
-         *     at this branch of the tree, for all numeric attributes.
-         * @param {array} max_numeric_value - The maximum value reachable, 
-         *     at this branch of the tree, for all numeric attributes.
-         * @param {int} random_state - Seed for PRNG.
-         * @return {node} - Returns the node, either a inner node or a leaf node.
-         * 
-         * Notes
-         * -----
-         * If the splitting attribute of a node happens to be a nominal attribute 
-         * we guarantee that none of its children will split on the same attribute, 
-         * as it would have no use for that split. 
-         */
-
         let random = this.random1;
         //console.log(this.bool_sample_random_state)
         let node = new Node();
@@ -153,7 +151,7 @@ class RandomTreeGenerator extends Stream {
             let leaf = new Node();
             leaf.class_label = Math.floor(random.random(this.bool_tree_random_state) * this.n_classes);
             return (leaf);
-        }
+        };
         
         let chosen_att = random.random_int(this.bool_tree_random_state, 0, nominal_att_candidates.length);
         if(chosen_att < this.n_num_features) {
@@ -178,101 +176,97 @@ class RandomTreeGenerator extends Stream {
                                                               new_min_value,
                                                               max_numeric_value,
                                                               random_state));
-        }
-        else {
+        } else {
             node.split_att_index = nominal_att_candidates[chosen_att];
             let new_nominal_candidates = [];
             for(let i = 0; i < nominal_att_candidates.length; i++) {
                 if(nominal_att_candidates[i] != node.split_att_index) {
                     new_nominal_candidates.push(nominal_att_candidates[i]);
-                }
-            }
+                };
+            };
             for(let i =0;i < this.n_categories_per_cat_feature ; i++) {
                 node.children.push(this.generate_random_tree_node(current_depth + 1,
                                                                     new_nominal_candidates,
                                                                     min_numeric_value, 
                                                                     max_numeric_value, 
                                                                     random_state));
-            }
-        }
+            };
+        };
         return (node);
-    }
+    };
+
+    /** classify_instance
+     * 
+     * After a sample is generated it passes through this function, which 
+     * advances the tree structure until it finds a leaf node.
+     * 
+     * @param {node} node - The Node that will be verified. 
+     *     Either it's a leaf, and then the label is returned, 
+     *     or it's a inner node, and so the algorithm will continue
+     *     to advance in the structure.
+     * @param {array} att_values - The set of generated feature values of the sample.
+     * @return {int} - Returns leaf node class_label.
+     */
 
     classify_instance(node, att_values) {
-        /** classify_instance
-         * 
-         * After a sample is generated it passes through this function, which 
-         * advances the tree structure until it finds a leaf node.
-         * 
-         * @param {node} node - The Node that will be verified. 
-         *     Either it's a leaf, and then the label is returned, 
-         *     or it's a inner node, and so the algorithm will continue
-         *     to advance in the structure.
-         * @param {array} att_values - The set of generated feature values of the sample.
-         * @return {int} - Returns leaf node class_label.
-         */
-
         if(node.children.length == 0) {
             return (node.class_label);
-        }
+        };
 
         if(node.split_att_index < this.n_num_features) {
             let aux = att_values[node.split_att_index] ? 1 : 2;
             return (this.classify_instance(node.children[aux], att_values));
-        }
-        else {
+        } else {
             return (this.classify_instance(
                 node.children[this.get_integer_nominal_attribute_representation(node.split_att_index, att_values)],
                  att_values));
-        }
-    }
+        };
+    };
 
+    /** get_integer_nominal_attribute_representation
+     * 
+     * Utility function, to determine a nominal index when coded in one-hot 
+     * fashion.
+     * 
+     * The nominal_index uses as reference the number of nominal attributes 
+     * plus the number of numerical attributes. 
+     * @param {int} nominal_index - The nominal feature index.
+     * @param {array} att_values - The features array.
+     * @return {int} - This function returns the index of the active variable
+     *     in a nominal attribute 'hot one' representation. 
+     * 
+     */
     get_integer_nominal_attribute_representation(nominal_index = null, att_values = null) {
-        /** get_integer_nominal_attribute_representation
-         * 
-         * Utility function, to determine a nominal index when coded in one-hot 
-         * fashion.
-         * 
-         * The nominal_index uses as reference the number of nominal attributes 
-         * plus the number of numerical attributes. 
-         * @param {int} nominal_index - The nominal feature index.
-         * @param {array} att_values - The features array.
-         * @return {int} - This function returns the index of the active variable
-         *     in a nominal attribute 'hot one' representation. 
-         * 
-         */
-
         let min_index = this.n_num_features + (nominal_index - this.n_num_features) * this.n_categories_per_cat_feature
 
         for(let i = 0; i < this.n_categories_per_cat_feature; i++) {
             if (att_values[Math.floor(min_index)] == 1) {
                 return (i);
-            }
+            };
             min_index += 1;
-        }
+        };
         return (null);
-    }
+    };
 
     n_remaining_samples() {
         return (-1);
-    }
+    };
 
     has_more_samples() {
         return (true);
-    }
+    };
 
+    /** next_sample
+     * 
+     * Randomly generates attributes values, and then classify each instance 
+     * generated.
+     * 
+     * @param {int} batch_size -The number of samples to return.
+     * @returns {array} - Return an array with the features matrix and the labels
+     *     matrix for the batch_size samples that were requested.
+     * 
+     */
     next_sample(batch_size = 1) {
-        /** next_sample
-         * 
-         * Randomly generates attributes values, and then classify each instance 
-         * generated.
-         * 
-         * @param {int} batch_size -The number of samples to return.
-         * @returns {array} - Return an array with the features matrix and the labels
-         *     matrix for the batch_size samples that were requested.
-         * 
-         */
-
         let random = this.random2;
         let num_attributes = -1;
         let data = [];
@@ -285,19 +279,18 @@ class RandomTreeGenerator extends Stream {
         for(let j = 0; j < batch_size; j++) {
             for(let i = 0; i < this.n_num_features; i++) {
                 data[j][i] = random.random(this.bool_sample_random_state);
-            }
+            };
 
             for(let i = this.n_num_features; i < dimensions[1] - 1; i = i + this.n_categories_per_cat_feature) {
                 let aux = random.random_int(this.bool_sample_random_state, 0, this.n_categories_per_cat_feature);
                 for(let k = 0; k < this.n_categories_per_cat_feature; k++) {
                     if(aux == k) {
                         data[j][k + i] = 1.0;
-                    }
-                    else {
+                    } else {
                         data[j][k + i] = 0.0;
-                    }
-                }
-            }
+                    };
+                };
+            };
 
             data[j][this.n_num_features + (this.n_cat_features * this.n_categories_per_cat_feature)] =
                this.classify_instance(this.tree_root, data[j]);
@@ -308,13 +301,17 @@ class RandomTreeGenerator extends Stream {
             for(let k = 0; k < batch_size; k++) {
                 this.current_sample_x.push(data[k].slice(0, data[k].length - 1));
                 this.current_sample_y.push(data[k][data[k].length - 1]);
-            }
+            };
             num_attributes = this.n_num_features + (this.n_cat_features * this.n_categories_per_cat_feature);
-        }
+        };
 
         return ([this.current_sample_x, this.current_sample_y]);
-    }
-
+    };
+    /** get_info()
+     * 
+     * Get info.
+     * 
+     */
     get_info() {
         let info = 'RandomTreeGenerator:' 
                     //+ '\n bool_tree_random_state: ' + this.bool_tree_random_state 
@@ -327,8 +324,8 @@ class RandomTreeGenerator extends Stream {
                     + '\n min_leaf_depth: ' + this.min_leaf_depth 
                     + '\n fraction_leaves_per_level: ' + this.fraction_of_leaves_per_level;
         return (info);
-    }
-}
+    };
+};
 
 class Node {
     /**
@@ -349,6 +346,6 @@ class Node {
         this.split_att_index = split_att_index;
         this.split_att_value = split_att_value;
         this.children = [];
-    }
-}
+    };
+};
 module.exports = RandomTreeGenerator;

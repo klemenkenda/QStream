@@ -1,98 +1,142 @@
-
-//MOVE IN utils
+/** sum
+ * 
+ * sum the values in array
+ * 
+ * @param {array} array arry
+ * @return {number} returns sum
+ */
 function sum(array) {
     sum = 0;
-    for(let i = 0; i < array.length ; i++) {
+    for (let i = 0; i < array.length ; i++) {
         sum += array[i];
-    }
+    };
     return sum;
-}
+};
 
+/** unique_labels
+ * 
+ * Take each element in array of classes only once and sort it.
+ * 
+ * @param {array} classes array of classes
+ * @returns {array} returns unique classes
+ */
 function unique_labels(classes) {
     let mySet = new Set(classes);
     classes = Array.from(mySet).sort(function(a, b) {return a - b});
     return classes;
-}
+};
 
+/** _check_partial_fit_first_call
+ * 
+ * Ichecks if this is the first call to partisal fit.
+ * If it is not, it checks if classes are the same as the last time. 
+ * If it is the first call it sets classes.
+ * 
+ * @param {class - object} clf 
+ * @param {array} classes 
+ * @return {bool} true if it is first call to partial fit.
+ */
 function _check_partial_fit_first_call(clf, classes = null) {
-    if((clf.classes_ === undefined || clf.classes_ == null) && classes == null ) {
+    if ((clf.classes_ === undefined || clf.classes_ == null) && classes == null ) {
         throw new Error("Classes must be passed on the first call to partial_fit.");
-    }
-    else if(classes != null) {
+    } else if (classes != null) {
         classes = unique_labels(classes)
-
-        if(clf.classes_ != undefined && clf.classes_ != null) {
-            if(JSON.stringify(clf.classes_) != JSON.stringify(classes)) {
+        if (clf.classes_ != undefined && clf.classes_ != null) {
+            if (JSON.stringify(clf.classes_) != JSON.stringify(classes)) {
                 throw new Error('classes is not the same as on last call')
-            }
-        }
-        else {
+            };
+        } else {
             clf.classes_ = classes;
             return (true);
-        }
-    }
+        };
+    };
     return (false);
-}
+};
 
+/** label_binarize
+ * 
+ * Binarize labels in a one-vs-all fashion.
+ * 
+ * @param {array} y Sequence labels or multilabel data to encode.
+ * @param {array} classes Uniquely holds the label for each class.
+ * @return {array} array with binarized arrays.
+ */
 function label_binarize(y, classes) {
     let Y = [];
-    for(let i = 0; i < y.length; i++) {
+    for (let i = 0; i < y.length; i++) {
         let bin = [];
-        for(let j = 0; j < classes.length; j++) {
-            if(y[i] == classes[j]) {
+        for (let j = 0; j < classes.length; j++) {
+            if (y[i] == classes[j]) {
                 bin.push(1);
-            }
-            else{
+            } else{
                 bin.push(0);
-            }
-        }
+            };
+        };
         Y.push(bin);
-    }
+    };
     return Y;
-}
+};
 
+/** dot
+ * 
+ * Matrix multyplication.
+ * 
+ * @param {array} x 
+ * @param {array} y 
+ * @return {array} product
+ */
 function dot(x, y) {
     let multy = [];
     let dimensions = [x.length, y[0].length];
     for (let i = 0; i < dimensions[0]; i++) {
         multy.push(new Array(dimensions[1]).fill(0));
-    }
+    };
 
-    for(let j = 0; j < y[0].length; j++) {
-        for(let k = 0; k < x.length; k++) {
-            for(let i = 0; i < y.length; i++) {
+    for (let j = 0; j < y[0].length; j++) {
+        for (let k = 0; k < x.length; k++) {
+            for (let i = 0; i < y.length; i++) {
                 multy[k][j] = multy[k][j] + x[k][i] * y[i][j];
-            }
-        }
-    }
-
-/*     if(multy.length == 1) {
-        multy = multy[0];
-    } */
+            };
+        };
+    };
     return multy;
-}
+};
 
+/** Transpose
+ * 
+ * Transpose matrix.
+ * 
+ * @param {array} x 
+ * @return {array} transposed
+ */
 function transpose(x) {
     let y = [];
     let dimensions = [x[0].length, x.length];
     for (let i = 0; i < dimensions[0]; i++) {
         y.push(new Array(dimensions[1]).fill(0));
-    }
+    };
     for (let i = 0; i < dimensions[0]; ++i) {
         for (let j = 0; j < dimensions[1]; j++) {
             y[i][j] = x[j][i];
-        }
-    }
+        };
+    };
     return (y);
-}
+};
 
+/** logsumexp
+ * 
+ * Compute the log of the sum of exponentials of input elements.
+ * 
+ * @param {array} arr 
+ * @return {number}
+ */
 function logsumexp(arr) {
 
     let arr2 = [];
     let max = Math.max(...arr);
-    for(let i = 0; i < arr.length; i++){
+    for (let i = 0; i < arr.length; i++){
         arr2.push(arr[i] - max);
-    }
+    };
     let exp = arr2.map(function(val) {
         return Math.exp(val) 
     })
@@ -100,7 +144,7 @@ function logsumexp(arr) {
     let log = Math.log(sum);
 
     return (log + max);
-}
+};
 
 module.exports.sum = sum;
 module.exports.unique_labels = unique_labels;
@@ -118,6 +162,6 @@ module.exports.logsumexp = logsumexp;
 
 //console.log(dot([[1,1,1],[0,1,2]],[[1,2,3,4,5],[1,1,1,1,1],[2,2,2,2,2]]))
 
-//console.log(transpose([[1,1,1],[0,1,2]]) )
+//console.log(transpose([[1,1,1],[0,1,2]]))
 
 //console.log(logsumexp([-1000,-1000,-1003,-1004,-1005]))

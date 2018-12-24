@@ -50,23 +50,23 @@ describe('Naive Bayes', function(){
         let expected_prob = [2.4e-35, 9.2e-29, 1.0e+00, 3.3e-41, 3.1e-30, 1.4e-28];
         let prob = learner.predict_proba([X[2]])
         
-        for(let i = 0; i < prob.length; i++) {
+        for (let i = 0; i < prob.length; i++) {
             let log10 = Math.floor(Math.log10(prob[i]));
             let div = log10 < 0 ? Math.pow(10, 1 - log10) : 10;
 
             assert.equal(Math.round(expected_prob[i] * div), Math.round(prob[i] * div));
-        }
+        };
     })
 
     it('partial_fit and predict should predict the expected value', function() {
         let learner = new bayes.NaiveBayes();
         let y1 = [1,2,3,4,5,6,0,7]
-        for(let i = 0; i < y.length ;i++) {
+        for (let i = 0; i < y.length ;i++) {
             let X_ = [X[i]];
             let y_ = [y[i]];
         
             learner.partial_fit(X_, y_, classes = y1, sample_weight = null);
-        }
+        };
         assert.equal(3, learner.predict([X[2]])[0]);
         assert.equal(4, learner.predict([X[3]])[0]);
     })
@@ -74,21 +74,21 @@ describe('Naive Bayes', function(){
     it('predicted probability should be as expected.', function() {
         let learner = new bayes.NaiveBayes();
         let y1 = [1,2,3,4,5]
-        for(let i = 0; i < y.length ;i++) {
+        for (let i = 0; i < y.length ;i++) {
             let X_ = [X[i]];
             let y_ = [y[i]];
         
             learner.partial_fit(X_, y_, classes = y1, sample_weight = null);
-        }
+        };
         let expected_prob = [2.4e-35, 9.2e-29, 1.0e+00, 3.3e-41, 3.1e-30, 1.4e-28];
         let prob = learner.predict_proba([X[2]])
         
-        for(let i = 0; i < prob.length; i++) {
+        for (let i = 0; i < prob.length; i++) {
             let log10 = Math.floor(Math.log10(prob[i]));
             let div = log10 < 0 ? Math.pow(10, 1 - log10) : 10;
 
             assert.equal(Math.round(expected_prob[i] * div), Math.round(prob[i] * div));
-        }
+        };
     })
 
 })

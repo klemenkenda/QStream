@@ -18,7 +18,7 @@ describe('waveform_generator', function() {
                                   'att_num_20'];
             for(let i = 0; i < stream.n_features; i++) {
                 assert.equal(expected_names[i], stream.feature_names[i]);
-            }
+            };
         });
 
         it('expected targets should be [0, 1, 2]', function() {
@@ -26,7 +26,7 @@ describe('waveform_generator', function() {
 
             for(let i = 0; i < stream.n_classes; i++) {
                 assert.equal(expected_targets[i], stream.target_values[i]);
-            }
+            };
         });
 
         it('target_names should be \'target_0\'', function() {
@@ -95,9 +95,9 @@ describe('waveform_generator', function() {
                 for(let i = 0; i < n; i++) {
                     sum1 = sum1 + samples[0][i][j];
                     sum2 = sum2 + samples[0][i][20 - j];
-                }
+                };
             assert.ok(Math.abs(Math.round(sum1 / n * 10) - Math.round(sum2 / n * 10)) <= 3);
-            }
+            };
         });
 
         it('last sample should be the same as next sample called before', function() {
@@ -107,12 +107,12 @@ describe('waveform_generator', function() {
             for(let i = 0; i < stream.n_features; i++) {
                 assert.equal(next_sample[0][0][i], last_sample[0][0][i]);
                 assert.equal(next_sample[0][1][i], last_sample[0][1][i]);
-            }
+            };
 
             for(let i = 0; i < 2; i++) {
                 assert.equal(next_sample[1][i], last_sample[1][i]);
                 assert.equal(next_sample[1][i], last_sample[1][i]);
-            }
+            };
         });
 
     });
@@ -138,7 +138,7 @@ describe('waveform_generator', function() {
 
             for(let i = 0; i < stream.n_features; i++) {
                 assert.equal(expected_names[i], stream.feature_names[i]);
-            }
+            };
         });
 
         it('expected targets should be [0, 1, 2]', function() {
@@ -146,7 +146,7 @@ describe('waveform_generator', function() {
 
             for(let i = 0; i < stream.n_classes; i++) {
                 assert.equal(expected_targets[i], stream.target_values[i]);
-            }
+            };
         });
 
         it('target_names should be \'target_0\'', function() {
@@ -214,9 +214,9 @@ describe('waveform_generator', function() {
                 for(let i = 0; i < n; i++) {
                     sum1 = sum1 + samples[0][i][j];
                     sum2 = sum2 + samples[0][i][20 - j];
-                }
+                };
             assert.ok(Math.abs(Math.round(sum1 / n * 10) - Math.round(sum2 / n * 10)) <= 3);
-            }
+            };
         });
 
         it('last sample should be the same as next sample called before', function() {
@@ -225,11 +225,11 @@ describe('waveform_generator', function() {
             for(let i = 0; i < stream.n_features; i++) {
                 assert.equal(next_sample[0][0][i], last_sample[0][0][i]);
                 assert.equal(next_sample[0][1][i], last_sample[0][1][i]);
-            }
+            };
             for(let i = 0; i < 2; i++) {
                 assert.equal(next_sample[1][i], last_sample[1][i]);
                 assert.equal(next_sample[1][i], last_sample[1][i]);
-            }
+            };
         });
     });
 });
@@ -249,7 +249,7 @@ describe('RandomTreeGenerator', function(){
                                 'att_nom_1_val0', 'att_nom_1_val1', 'att_nom_1_val2', 'att_nom_1_val3', 'att_nom_1_val4'];
         for(let i = 0; i < expected_names.length; i++) {
             assert.equal(expected_names[i], stream.feature_names[i]);
-        }
+        };
         assert.equal(expected_names.length, stream.feature_names.length);
     });
 
@@ -257,7 +257,7 @@ describe('RandomTreeGenerator', function(){
         let expected_targets = [0, 1];
         for(let i = 0; i < stream.n_classes; i++) {
             assert.equal(expected_targets[i], stream.target_values[i]);
-        }
+        };
     });
 
     it('target_names should be \'class\' ', function() {
@@ -318,11 +318,11 @@ describe('RandomTreeGenerator', function(){
         for(let i = 0; i < stream.n_features; i++) {
             assert.equal(next_sample[0][0][i], last_sample[0][0][i]);
             assert.equal(next_sample[0][1][i], last_sample[0][1][i]);
-        }
+        };
         for(let i = 0; i < 2; i++) {
             assert.equal(next_sample[1][i], last_sample[1][i]);
             assert.equal(next_sample[1][i], last_sample[1][i]);
-        }
+        };
     });
 
     it('numeric features should have uniform distribution', function() {
@@ -344,7 +344,7 @@ describe('RandomTreeGenerator', function(){
             sum2 = sum2 + samples[0][i][2];
             sum3 = sum3 + samples[0][i][3];
             sum4 = sum4 + samples[0][i][4];
-        }
+        };
         assert.ok(Math.abs(sum0 - n / 2) < n_sig * Math.sqrt(n/12));
         assert.ok(Math.abs(sum1 - n / 2) < n_sig * Math.sqrt(n/12));
         assert.ok(Math.abs(sum2 - n / 2) < n_sig * Math.sqrt(n/12));
@@ -373,7 +373,7 @@ describe('RandomTreeGenerator', function(){
             sum2 = sum2 + samples[0][i][7];
             sum3 = sum3 + samples[0][i][8];
             sum4 = sum4 + samples[0][i][9];
-        }
+        };
         sum = sum0 + sum1 + sum2 + sum3 + sum4;
 
         assert.equal(n, sum);
@@ -395,7 +395,7 @@ describe('DataGenerator', function(){
     it('test if feature names are correct', function(){
         for(let i = 1; i < stream.feature_names.length + 1; i++){
             assert.equal('att_num_' + i, stream.feature_names[i - 1])
-        }
+        };
     })
 
     it('should be 16 fatures', function(){
@@ -429,7 +429,7 @@ describe('DataGenerator', function(){
         let sample2 = stream.next_sample();
         for(let i = 0; i < 11; i++){
             assert.equal(sample[0][0][i], sample2[0][0][i]);
-        }
+        };
         assert.equal(sample[1][0], sample2[1][0]);
     })
 

@@ -5,7 +5,7 @@ class Random {
      */
     constructor(seed = 7777) {
         this.seed = seed;
-    }
+    };
     random(random_state = false) {
         /**
          * Generates (psudo) random float.
@@ -14,21 +14,20 @@ class Random {
          * @return {float} - Raturns (pseudo) random float in interval [0,1).
          */
 
-        if(random_state) {
+        if (random_state) {
             this.seed = this.seed % 2147483647;
             if (this.seed <= 0) {
                 this.seed += 2147483647;
-            }
+            };
 
             this.seed = this.seed * 16807 % 2147483647;
             let float = (this.seed - 1) / 2147483646;
             return (float);
-        }
-        else {
+        } else {
             return (Math.random());
-        }
+        };
 
-    }
+    };
 
     random_int(random_state, min, max) {
         /**
@@ -42,7 +41,7 @@ class Random {
 
         let rand_int = Math.floor(this.random(random_state = random_state) * (max - min)) + min;
         return (rand_int);
-    }
+    };
 
     random_gauss(random_state = false) {
         /** 
@@ -56,6 +55,6 @@ class Random {
         while (u === 0) u = this.random(random_state = random_state);; //Converting [0,1) to (0,1)
         while (v === 0) v = this.random(random_state = random_state);;
         return (Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v));
-    }
-}
+    };
+};
 module.exports = Random;

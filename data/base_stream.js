@@ -20,70 +20,71 @@ class Stream {
         this.name = null;
     }
 
+    /**
+     * Prepare the stream for use. Can be the reading of a file, or
+     * the generation of a function, or anything necessary for the
+     * stream to work after its initialization.
+     *
+     * Notes
+     * -----
+     * Every time a stream is created this function has to be called.
+     */
     prepare_for_use() {
-        /**
-         * Prepare the stream for use. Can be the reading of a file, or
-         * the generation of a function, or anything necessary for the
-         * stream to work after its initialization.
-         *
-         * Notes
-         * -----
-         * Every time a stream is created this function has to be called.
-         */
         throw 'Not implemented';
     }
 
+    /**
+     * Retrieves last `batch_size` samples in the stream.
+     */
     last_sample() {
-        /**
-         * Retrieves last `batch_size` samples in the stream.
-         */
         return ([this.current_sample_x, this.current_sample_y]);
     }
 
+    /**
+     * Determine if the stream is restartable.
+     * @return {boolean} - tTrue if stream is restartable.
+     */
     is_restartable() {
-        /**
-         * Determine if the stream is restartable.
-         * @return {boolean} - tTrue if stream is restartable.
-         */
         return true;
     }
 
+    /** 
+     * Restart the stream.
+     */
     restart() {
-        /** 
-         * Restart the stream.
-         */
         this.prepare_for_use();
     }
 
+    /** 
+     * Returns the estimated number of remaining samples.
+     * 
+     * @return {int} - Remaining number of samples. -1 if infinite (e.g. generator)
+     */
     n_remaining_samples() {
-        /** 
-         * Returns the estimated number of remaining samples.
-         * 
-         * @return {int} - Remaining number of samples. -1 if infinite (e.g. generator)
-         */
         return (-1);
     }
 
+    /** Checks if stream has more samples.
+     *
+     * @return {boolean} - true if stream has more samples.
+     */
     has_more_samples() {
-        /** Checks if stream has more samples.
-         *
-         * @return {boolean} - true if stream has more samples.
-         */
+
         return (true);
     }
 
+    /**
+     * @return {string} -Info
+     */
     get_data_info() {
-        /**
-         * @return {string} -Info
-         */
         let info = this.name + '\n' + this.n_targets + ' targets\n' + this.n_classes + ' classes\n' + this.n_features + ' features';
         return (info);
     }
 
+    /**
+     * @return {string}
+     */
     get_class_type() {
-        /**
-         * @return {string}
-         */
         return 'stream';
     }
 }
