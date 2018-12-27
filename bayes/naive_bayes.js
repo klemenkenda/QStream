@@ -197,8 +197,8 @@ class BaseDiscreteNB extends BaseNB {
     fit(X, y, sample_weight = null) {
         let n_features = X[0].length;
 
-        let Y = utils.Bayes.label_binarize(y, utils.Bayes.unique_labels(y));
-        this.classes_ = utils.Bayes.unique_labels(y);
+        let Y = utils.Bayes.label_binarize(y, utils.Bayes.unique(y));
+        this.classes_ = utils.Bayes.unique(y);
 
         if (sample_weight != null) {
             for (let i = 0; y < sample_weight.length; i++) {
@@ -294,6 +294,8 @@ class MultinomialNB extends BaseDiscreteNB {
      * Calculate the posterior log probability of the samples X.
      */
     _joint_log_likelihood(X) {
+        //TODO check_is_fitted();
+        // check_array()
         let prod = utils.Bayes.dot(X, utils.Bayes.transpose(this.feature_log_prob_))
         let ret = [];
 
@@ -311,3 +313,171 @@ class MultinomialNB extends BaseDiscreteNB {
     };
 };
 module.exports = MultinomialNB;
+
+class GausianNB extends BaseNB {
+    constructor (priors = null, var_smoothing = 1e-9) {
+        super();
+        this.priors = priors;
+        this.var_smoothing = var_smoothing;
+    };
+
+    fit(X,y,sample_weight = null) {
+        return (_partial_fit(X, y, utils.Bayes.unique(y), _refit = true, sample_weight = sample_weight));
+    };
+
+    _update_mean_variance(n_past, mu, vari, X, sample_weight = null) {
+        if (X.length == 0) {
+            return ([mu, vari]);
+        }
+
+        let n_new = null;
+        let new_vari = [];
+        let new_mu = [];
+
+        if (sample_weight != null) {
+            //TODO
+            throw new Error("Not implemented for sample_weight != null.");
+        } else {
+            n_new = X.length;
+            let X_t = utils.Bayes.transpose(X);
+            for (let i = 0; i < X_t.length; i++) {
+                new_vari.push(utils.Bayes.variance(X_t[i]));
+                new_mu.push(utils.Bayes.mean(X_t[i]))
+            };
+        };
+
+        if (n_past == 0) {
+            return ([new_mu, new_vari]);
+        };
+
+        let n_total = n_past + n_new;
+
+        let total_mu = [];
+        let total_vari = []
+        for (let i = 0; i < X[0].length; i++) {
+            total_mu.push((n_new * new_mu[i] + n_past * mu[i]) / n_total);
+
+            let old_ssd = n_past * vari[i];
+            let new_ssd = n_new * new_vari[i];
+            let total_ssd = (old_ssd + new_ssd + (n_past / (n_new * n_total)) * Math.pow((n_new * mu[i] - n_new * new_mu[i]), 2));
+            total_vari.push(total_ssd / n_total);
+        }
+        return ([total_mu, total_vari]);
+    };
+
+    partial_fit(X, y, classes = null, sample_weight = null) {
+        return (_partial_fit(X, y, utils.Bayes.unique(y), _refit = false, sample_weight = sample_weight));        
+    }
+
+    _partial_fit(X, y, classes = null, _refit=False, sample_weight = null) {
+        let X_t = utils.Bayes.transpose(X);
+        let vari = [];
+        for (let i = 0; i < X_t.length; i++) {
+            vari.push(utils.Bayes.variance(X_t[i]));
+        };
+        this.epsilon_ = this.var_smoothing * Math.max(...vari);
+
+        if (_refit) {
+            this.classes_ = null;
+        };
+
+        if (utils.Bayes._check_partial_fit_first_call(this, classes)) {
+            let n_features = X[0].length;
+            let n_classes = this.classes_.length;
+            this.theta_ = [];
+            this.sigma_ = []
+            let dimensions = [n_classes, n_features];
+            for (let i = 0; i < dimensions[0]; ++i) {
+                this.theta_.push(new Array(dimensions[1]).fill(0));
+                this.sigma_.push(new Array(dimensions[1]).fill(0));
+            };
+            this.class_count_ = Array(n_classes).fill(0);
+            
+            if (this.priors != null){
+                //TODO some checks for priors
+                this.class_prior = priors;
+            } else {
+                this.class_prior_ = Array(this.classes_.length).fill(0);
+            };
+        } else {
+            if (X[0].length != this.theta_[0].length) {
+                let msg = "Number of features does not match previous data.";
+                throw new Error(msg);
+            };
+            for (let i = 0; i < this.sigma_.length; i++) {
+                let epsilon = this.epsilon_;
+                this.sigma_[i] = this.sigma_[i].map(function(num) {
+                    return (num - epsilon);
+                })
+            };
+        };
+        classes = this.classes_;
+
+        let unique_y = utils.Bayes.unique(y);
+        //TODO check if unique y has more samples than classes.
+
+        for (let j = 0; j < unique_y.length; j++) {
+            let i = classes.indexOf(unique_y[j]);
+            let X_i = [];
+
+            for(let k = 0 ; k < y.length; k++) {
+                if (y[k] == unique_y[j]) {
+                    X_i.push(X[k]);
+                };
+            };
+
+            let sw_i = null;
+            let N_i = null;
+            if (sample_weight != null) {
+                //TODO
+                throw new Error("Not implemented for sample_weight != null.");
+            } else {
+                sw_i = null;
+                N_i = X_i.length;
+            };
+
+            let update_mean_variance = this._update_mean_variance(this.class_count_[i], this.theta_[i], this.sigma_[i], X_i, sw_i);
+            let new_theta = update_mean_variance[0];
+            let new_sigma = update_mean_variance[1];
+
+            this.theta_[i] = new_theta;
+            this.sigma_[i] = new_sigma;
+            this.class_count_[i] = this.class_count_[i] + this.epsilon_;
+
+            if (this.priors == 0) {
+                this.class_prior_ = this.class_count_.map(function(num) {
+                    return (num / utils.Bayes.sum(this.class_count_));
+                })
+            }
+        };
+    }
+
+    _joint_log_likelihood(X) {
+        //TODO check_is_fitted();
+        // check_array()
+
+        let joint_log_likelihood = [];
+        for (let i = 0; i < this.classes_.length; i++) {
+            let jointi = Math.log(this.class_prior_[i]);
+        }
+
+
+    }
+};
+
+utils.Bayes.variance([1,2,3])
+
+let classi = new GausianNB()
+
+n_past = 2;
+mu = [1,2];
+vari = [1,3]
+X  = [[1,2],[2,3]]
+y = [1,2]
+//classi._update_mean_variance(n_past, mu, vari, X, sample_weight = null)
+classi._partial_fit(X, y, classes = [1,2], _refit=false, sample_weight = null)
+classi._partial_fit(X, y, classes = [1,2], _refit=false, sample_weight = null)
+classi._partial_fit(X, y, classes = [1,2], _refit=false, sample_weight = null)
+classi._partial_fit(X, y, classes = [1,2], _refit=false, sample_weight = null)
+
+//classi.predict([[1,2]])

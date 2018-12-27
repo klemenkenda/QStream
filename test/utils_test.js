@@ -1,4 +1,4 @@
-const Utils =  require('../utils/utils.js')
+const Utils =  require('../utils/index.js')
 const assert = require('assert')
 
 describe('Utils', function(){
