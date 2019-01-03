@@ -312,19 +312,49 @@ class MultinomialNB extends BaseDiscreteNB {
         return (ret);
     };
 };
-module.exports = MultinomialNB;
+module.exports.MultinomialNB = MultinomialNB;
 
-class GausianNB extends BaseNB {
+class GaussianNB extends BaseNB {
+    /**
+     * Gaussian Naive Bayes (GaussianNB)
+     * Can perform online updates to model parameters via `partial_fit` method.
+     * 
+     * @param {array} priors 
+     * @param {float} var_smoothing 
+     */
     constructor (priors = null, var_smoothing = 1e-9) {
         super();
         this.priors = priors;
         this.var_smoothing = var_smoothing;
     };
 
+    /** fit()
+     * 
+     * Fit Gaussian Naive Bayes according to X, y
+     * 
+     * @param {array} X Training vectors
+     * @param {array} y Target values.
+     * @param {array} sample_weight Weights applied to individual samples (1. for unweighted).
+     */
     fit(X,y,sample_weight = null) {
-        return (_partial_fit(X, y, utils.Bayes.unique(y), _refit = true, sample_weight = sample_weight));
+        return (this._partial_fit(X, y, utils.Bayes.unique(y), true, sample_weight));
     };
 
+    /** _update_mean_variance()
+     * 
+     * Compute online update of Gaussian mean and variance.
+     * Given starting sample count, mean, and variance, a new set of
+     * points X, and optionally sample weights, return the updated mean and
+     * variance.
+     * 
+     * @param {int} n_past Number of samples represented in old mean and variance. If sample
+     *                     weights were given, this should contain the sum of sample
+     *                     weights represented in old mean and variance.
+     * @param {array} mu Means for Gaussians in original set.
+     * @param {array} vari Variances for Gaussians in original set.
+     * @param {array} X New data set.
+     * @param {array} sample_weight Weights applied to individual samples (1. for unweighted).
+     */
     _update_mean_variance(n_past, mu, vari, X, sample_weight = null) {
         if (X.length == 0) {
             return ([mu, vari]);
@@ -353,23 +383,57 @@ class GausianNB extends BaseNB {
         let n_total = n_past + n_new;
 
         let total_mu = [];
-        let total_vari = []
+        let total_vari = [];
         for (let i = 0; i < X[0].length; i++) {
             total_mu.push((n_new * new_mu[i] + n_past * mu[i]) / n_total);
 
             let old_ssd = n_past * vari[i];
             let new_ssd = n_new * new_vari[i];
+
             let total_ssd = (old_ssd + new_ssd + (n_past / (n_new * n_total)) * Math.pow((n_new * mu[i] - n_new * new_mu[i]), 2));
             total_vari.push(total_ssd / n_total);
         }
         return ([total_mu, total_vari]);
     };
 
+    /** partial_fit()
+     * 
+     * Incremental fit on a batch of samples.
+     * This method is expected to be called several times consecutively
+     * on different chunks of a dataset so as to implement out-of-core
+     * or online learning.
+     * This is especially useful when the whole dataset is too big to fit in
+     * memory at once.
+     * This method has some performance and numerical stability overhead,
+     * hence it is better to call partial_fit on chunks of data that are
+     * as large as possible (as long as fitting in the memory budget) to
+     * hide the overhead.
+     *
+     * @param {array} X Training vectors.
+     * @param {array} y Target values.
+     * @param {array} classes List of all the classes that can possibly appear in the y vector.
+     *                        Must be provided at the first call to partial_fit, can be omitted
+     *                        in subsequent calls.
+     * @param {array} sample_weight Weights applied to individual samples (1. for unweighted).
+     */
     partial_fit(X, y, classes = null, sample_weight = null) {
-        return (_partial_fit(X, y, utils.Bayes.unique(y), _refit = false, sample_weight = sample_weight));        
+        return (this._partial_fit(X, y, classes, false, sample_weight));        
     }
 
-    _partial_fit(X, y, classes = null, _refit=False, sample_weight = null) {
+    /** _partial_fit()
+     * 
+     * Actual implementation of Gaussian NB fitting.
+     * 
+     * @param {array} X Training vectors.
+     * @param {array} y Target values.
+     * @param {array} classes List of all the classes that can possibly appear in the y vector.
+     *                        Must be provided at the first call to partial_fit, can be omitted
+     *                        in subsequent calls.
+     * @param {bool} _refit If true, act as though this were the first time we called
+     *                      _partial_fit (ie, throw away any past fitting and start over).
+     * @param {array} sample_weight Weights applied to individual samples (1. for unweighted).
+     */
+    _partial_fit(X, y, classes = null, _refit=false, sample_weight = null) {
         let X_t = utils.Bayes.transpose(X);
         let vari = [];
         for (let i = 0; i < X_t.length; i++) {
@@ -380,7 +444,6 @@ class GausianNB extends BaseNB {
         if (_refit) {
             this.classes_ = null;
         };
-
         if (utils.Bayes._check_partial_fit_first_call(this, classes)) {
             let n_features = X[0].length;
             let n_classes = this.classes_.length;
@@ -408,7 +471,7 @@ class GausianNB extends BaseNB {
                 let epsilon = this.epsilon_;
                 this.sigma_[i] = this.sigma_[i].map(function(num) {
                     return (num - epsilon);
-                })
+                });
             };
         };
         classes = this.classes_;
@@ -439,45 +502,48 @@ class GausianNB extends BaseNB {
             let update_mean_variance = this._update_mean_variance(this.class_count_[i], this.theta_[i], this.sigma_[i], X_i, sw_i);
             let new_theta = update_mean_variance[0];
             let new_sigma = update_mean_variance[1];
-
+            
             this.theta_[i] = new_theta;
             this.sigma_[i] = new_sigma;
-            this.class_count_[i] = this.class_count_[i] + this.epsilon_;
+            this.class_count_[i] = this.class_count_[i] + N_i;
+            };
 
-            if (this.priors == 0) {
-                this.class_prior_ = this.class_count_.map(function(num) {
-                    return (num / utils.Bayes.sum(this.class_count_));
-                })
-            }
+        for (let i = 0; i < this.sigma_.length; i++) {
+            let epsilon = this.epsilon_
+            this.sigma_[i] = this.sigma_[i].map(function(num) {
+                return (num + epsilon);
+            });
         };
-    }
+        this.sigma_
+        if (this.priors == null) {
+            let class_count_ = this.class_count_;
+            this.class_prior_ = this.class_count_.map(function(num) {
+                return (num / utils.Bayes.sum(class_count_));
+            });
+        };
+    };
 
+    /*
+     * Calculate the posterior log probability of the samples X.
+     */
     _joint_log_likelihood(X) {
         //TODO check_is_fitted();
         // check_array()
-
-        let joint_log_likelihood = [];
-        for (let i = 0; i < this.classes_.length; i++) {
-            let jointi = Math.log(this.class_prior_[i]);
-        }
-
-
-    }
+        let joint_log_likelihood_ = []
+        for (let k = 0; k < X.length; k++) {
+            let joint_log_likelihood = [];
+            for (let i = 0; i < this.classes_.length; i++) {
+                let jointi = Math.log(this.class_prior_[i]);
+                let n_ij = 0;
+                for (let j = 0; j < this.sigma_[i].length ; j++) {
+                    n_ij = n_ij - 0.5 * Math.log(2 * Math.PI * this.sigma_[i][j]);
+                    n_ij = n_ij - 0.5 * (Math.pow((X[k][j] - this.theta_[i][j]), 2)) / (this.sigma_[i][j]);
+                };
+                joint_log_likelihood.push(jointi + n_ij);
+            };
+            joint_log_likelihood_.push(joint_log_likelihood)
+        };
+        return (joint_log_likelihood_);
+    };
 };
-
-utils.Bayes.variance([1,2,3])
-
-let classi = new GausianNB()
-
-n_past = 2;
-mu = [1,2];
-vari = [1,3]
-X  = [[1,2],[2,3]]
-y = [1,2]
-//classi._update_mean_variance(n_past, mu, vari, X, sample_weight = null)
-classi._partial_fit(X, y, classes = [1,2], _refit=false, sample_weight = null)
-classi._partial_fit(X, y, classes = [1,2], _refit=false, sample_weight = null)
-classi._partial_fit(X, y, classes = [1,2], _refit=false, sample_weight = null)
-classi._partial_fit(X, y, classes = [1,2], _refit=false, sample_weight = null)
-
-//classi.predict([[1,2]])
+module.exports.GaussianNB = GaussianNB;

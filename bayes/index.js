@@ -1,3 +1,4 @@
 module.exports = {
-    NaiveBayes: require('./naive_bayes.js')
+    MultinominalNB: require('./naive_bayes.js').MultinomialNB,
+    GaussianNB: require('./naive_bayes.js').GaussianNB
 }

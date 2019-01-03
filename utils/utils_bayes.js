@@ -160,7 +160,6 @@ function variance(arr) {
     return (sum_ / arr.length);
 };
 
-
 module.exports.sum = sum;
 module.exports.unique = unique;
 module.exports._check_partial_fit_first_call = _check_partial_fit_first_call;
@@ -170,18 +169,3 @@ module.exports.dot = dot;
 module.exports.logsumexp = logsumexp;
 module.exports.mean = mean;
 module.exports.variance = variance;
-
-//console.log(_check_partial_fit_first_call({classes_: [2,3,4,22]}, [2,3,22,2,3,4]))
-//console.log(_check_partial_fit_first_call({classes_: undefined}, [2,3,22,2,3,4]))
-
-//console.log(label_binarize([1,2,2,3,1,1,2,3], [2,1,3,4]))
-//console.log(multy_T_add([ [ 3, 4, 5, 6, 7 ], [ 1, 1, 1, 1, 1 ] ],[[1,0],[0,1],[1,0]],[[1,2,3,4,5],[1,1,1,1,1],[2,2,2,2,2]]))
-
-//console.log(dot([[1,1,1],[0,1,2]],[[1,2,3,4,5],[1,1,1,1,1],[2,2,2,2,2]]))
-
-//console.log(transpose([[1,1,1],[0,1,2]]))
-
-//console.log(logsumexp([-1000,-1000,-1003,-1004,-1005]))
- 
-//console.log(mean([1,2,3]))
-//console.log(variance([1,2,3])) 
