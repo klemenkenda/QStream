@@ -1,3 +1,6 @@
 # node stuff
 package-lock.json
 node_modules/
+
+#jupyter
+.ipynb_checkpoints
